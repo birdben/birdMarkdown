@@ -94,19 +94,16 @@ $ npm install
 
 # 执行完npm install命令后，会生成如下的目录结构
 .
-├── _config.yml
-├── package.json
-├── scaffolds
-├── source
-|   ├── _drafts
-|   └── _posts
-└── themes
-
-_config.yml : 网站的配置信息
-package.json : 应用程序的信息。EJS, Stylus 和 Markdown renderer 已默认安装
-scaffolds	: 模版文件夹。当新建文章时，Hexo 会根据 scaffold 来建立文件。
-source	: 资源文件夹是存放用户资源的地方。除 _posts 文件夹之外，开头命名为 _ (下划线)的文件 / 文件夹和隐藏的文件将会被忽略。Markdown 和 HTML 文件会被解析并放到 public 文件夹，而其他文件会被拷贝过去。
-themes	: 主题 文件夹。Hexo 会根据主题来生成静态页面。
+├── .deploy       #需要部署的文件
+├── node_modules  #Hexo插件
+├── public        #生成的静态网页文件
+├── scaffolds     #模板
+├── source        #博客正文和其他源文件, 404 favicon CNAME 等都应该放在这里。Markdown 和 HTML 文件会被解析并放到 public 文件夹，而其他文件会被拷贝过去。
+|   ├── _drafts   #草稿
+|   └── _posts    #文章
+├── themes        #主题
+├── _config.yml   #全局配置文件
+└── package.json
 ```
 
 ### 配置
@@ -178,6 +175,92 @@ $ hexo --draft
 $ hexo --cwd /path/to/cwd
 ```
 
+#### Hexo添加管理博客
+
+```
+# 新建博文，其中postName是博文题目，新的博文会自动生成在博客目录下source/_posts/postName.md
+$ hexo new "postName"
+
+# 文件自动生成格式如下:
+---
+# 博文题目 
+title: "It Starts with iGaze: Visual Attention Driven Networkingwith Smart Glasses"
+# 生成时间
+date: 2014-11-21 11:25:38
+# 标签, 多个标签可以使用[]数组格式
+tags:[tag1, tag2, tag3]
+# 分类, 多个分类可以使用[]数组格式
+categories:[cat1,cat2,cat3]
+---
+正文, 使用 Markdown 语法书写
+```
+
+#### Hexo添加统计分析工具
+
+##### 设置birdben.github.io/themes/yilia/_config.yml
+
+```
+# Miscellaneous
+google_analytics: 
+  enable: false
+  ## e.g. UA-82900755-1 your google analytics ID.
+  id: UA-82900755-1
+  ## e.g. yangjian.me your google analytics site or set the value as auto.
+  site: auto
+cnzz_tongji:
+  enable: true
+  siteid: 1260188951
+```
+
+#### 添加Google Analytics分析工具
+
+##### birdben.github.io/themes/yilia/layout/_partial/google-analytics.ejs
+
+```
+<% if (theme.google_analytics){ %>
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-82900755-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+<% } %>
+```
+
+登录Google Analytics复制如图中的统计代码，保存到google-analytics.ejs文件中，在birdben.github.io/themes/yilia/_config.yml文件中设置Google Analytics的跟踪ID
+
+![Google Analytics统计](http://img.blog.csdn.net/20160822022626078?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+#### 添加CNZZ分析工具
+
+##### birdben.github.io/themes/yilia/layout/_partial/head.ejs
+
+```
+# 修改head.ejs，在</head>前面添加如下代码
+<%- partial('cnzz-analytics') %>
+```
+
+##### birdben.github.io/themes/yilia/layout/_partial/cnzz-analytics.ejs
+
+```
+<% if (theme.cnzz_tongji.enable){ %>
+<script type="text/javascript">
+var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1260188951'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1260188951' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<% } %>
+```
+
+登录CNZZ复制如图中的统计代码，保存到cnzz-analytics.ejs文件中，在birdben.github.io/themes/yilia/_config.yml文件中设置CNZZ的siteid
+
+![CNZZ统计](http://img.blog.csdn.net/20160822021829052?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+
 参考文章：
 
 - https://hexo.io/zh-cn/docs/
@@ -185,3 +268,4 @@ $ hexo --cwd /path/to/cwd
 - http://www.jianshu.com/p/465830080ea9
 - http://opiece.me/2015/04/09/hexo-guide/
 - http://www.jianshu.com/p/b7886271e21a
+- http://www.cnblogs.com/tengj/p/5365434.html
