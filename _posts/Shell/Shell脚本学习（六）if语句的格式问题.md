@@ -108,6 +108,16 @@ if [ "$var1" = "$var2" ]; then
 else
   echo '$var1 not equals $var2'
 fi
+
+# 判断变量是否模糊匹配
+base_version='2.2.0'
+if [[ $base_version =~ 1.* ]]; then
+  base_version='1.x'
+fi
+if [[ $base_version =~ 2.* ]]; then
+  base_version='2.x'
+fi
+echo $base_version
 ```
 
 参考文章：
