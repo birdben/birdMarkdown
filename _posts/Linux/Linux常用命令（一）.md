@@ -288,6 +288,71 @@ $ chown -R hadoop:hadoop /usr/hadoop/
 cat /etc/passwd
 ```
 
+### 查看用户登录信息
+
+```
+$ w
+$ w username
+
+18:40  up 11 days, 21:35, 5 users, load averages: 3.35 2.94 2.92
+USER     TTY      FROM              LOGIN@  IDLE WHAT
+ben      console  -                16 816  11days -
+ben      s000     -                16 816      - w
+ben      s001     -                14:10      12 -bash
+ben      s003     -                21 816     13 -bash
+ben      s004     -                16:28       2 -bash
+
+# 输出内容
+USER :登陆的用户名；
+TTY :登陆终端；
+FROM :从哪个IP地址登录；
+LOGIN@ :登陆时间；
+IDLE :用户闲置时间；
+JCPU :指的是和该终端连接的所有进程占用的时间。这个时间里并不包括过去的后台作业时间，但却包括当前正在运行的后台作业所占用的时间；
+PCPU :是指当前进程所占用的时间；
+WHAT :当前正在运行的命令；
+
+$ who
+
+ben      console  Aug 16 21:05
+ben      ttys000  Aug 16 23:26
+ben      ttys001  Aug 28 14:10
+ben      ttys003  Aug 21 13:25
+ben      ttys004  Aug 28 16:28
+
+# 输出内容
+- 用户名
+- 登录终端
+- 登录时间（登录来源IP地址）
+
+# 查看当前登录和过去登录的用户信息
+# 注释：last命令默认读取/var/log/wtmp文件数据
+$ last
+
+ben       ttys005                   Sun Aug 28 17:34 - 17:53  (00:19)
+ben       ttys005                   Sun Aug 28 17:21 - 17:29  (00:07)
+ben       ttys004                   Sun Aug 28 16:28   still logged in
+ben       ttys001                   Sun Aug 28 14:10   still logged in
+ben       ttys002                   Wed Aug 24 23:54 - 18:25 (3+18:31)
+
+# 输出内容
+- 用户名
+- 登录终端
+- 登录IP
+- 登录时间
+- 退出时间（在线时间）
+
+# 查看所有用户最后一次登录时间（Ubuntu好用，Mac不好用，Mac下没有/var/log/lastlog文件）
+# 注释：lastlog命令默认读取/var/log/lastlog文件内容
+$ lastlog
+
+# 输出内容
+- 用户名
+- 登录终端
+- 登录IP
+- 最后一次登录时间
+```
+
 ### alias别名（很有用，便于记录常用命令）
 
 ```
