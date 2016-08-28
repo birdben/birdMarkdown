@@ -1,4 +1,9 @@
-## Ubuntu安装Shadowsocks
+---
+title: "Ubuntu安装Shadowsocks"
+date: 2016-08-29 03:17:11
+tags: [Shadowsocks]
+categories: [Linux]
+---
 
 ### 安装Shadowsocks和Supervisor
 ```
