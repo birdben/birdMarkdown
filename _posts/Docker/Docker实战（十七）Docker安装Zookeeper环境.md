@@ -140,6 +140,37 @@ WatchedEvent state:SyncConnected type:None path:null
 [zookeeper, zk_test]
 ```
 
+##### 遇到问题zkServer.sh status
+
+```
+# SSH登录到Docker容器，查看supervisor的状态
+$ sudo supervisorctl status
+sshd                             RUNNING    pid 8, uptime 0:35:36
+zookeeper                        RUNNING    pid 9, uptime 0:35:36
+
+# 查看zookeeper进程
+$ ps -ef | grep zookeeper
+root         9     1  0 06:20 ?        00:00:04 /software/jdk7/bin/java -Dzookeeper.log.dir=. -Dzookeeper.root.logger=INFO,CONSOLE -cp /software/zookeeper-3.4.8/bin/../build/classes:/software/zookeeper-3.4.8/bin/../build/lib/*.jar:/software/zookeeper-3.4.8/bin/../lib/slf4j-log4j12-1.6.1.jar:/software/zookeeper-3.4.8/bin/../lib/slf4j-api-1.6.1.jar:/software/zookeeper-3.4.8/bin/../lib/netty-3.7.0.Final.jar:/software/zookeeper-3.4.8/bin/../lib/log4j-1.2.16.jar:/software/zookeeper-3.4.8/bin/../lib/jline-0.9.94.jar:/software/zookeeper-3.4.8/bin/../zookeeper-3.4.8.jar:/software/zookeeper-3.4.8/bin/../src/java/lib/*.jar:/software/zookeeper-3.4.8/bin/../conf: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false org.apache.zookeeper.server.quorum.QuorumPeerMain /software/zookeeper-3.4.8/bin/../conf/zoo.cfg
+admin      198   191  0 06:57 pts/0    00:00:00 grep zookeeper
+
+# 使用zkServer.sh status查看zk的状态，发现提示zk并没有运行
+$ ./zkServer.sh status
+bash: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
+ZooKeeper JMX enabled by default
+Using config: /software/zookeeper-3.4.8/bin/../conf/zoo.cfg
+Error contacting service. It is probably not running.
+
+# 这个问题是因为zk需要依赖jdk环境，我们需要配置java环境变量，因为Dockerfile中的配置对于我们ssh的admin用户是不生效的，需要单独export一下
+$ export JAVA_HOME=/software/jdk7
+
+# 再次查看就OK了
+$ ./zkServer.sh status
+bash: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
+ZooKeeper JMX enabled by default
+Using config: /software/zookeeper-3.4.8/bin/../conf/zoo.cfg
+Mode: standalone
+```
+
 
 参考文章：
 
