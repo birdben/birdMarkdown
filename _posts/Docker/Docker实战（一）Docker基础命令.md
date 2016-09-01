@@ -41,6 +41,13 @@ $ docker top birdben/ubuntu:v1
 # 从容器里面拷贝文件/目录到本地一个路径
 $ docker cp ID:/container_path to_path
 
+# Docker attach可以attach到一个已经运行的容器的stdin，然后进行命令执行的动作。但是需要注意的是，如果从这个stdin中exit，会导致容器的停止。
+$ docker attach ID
+
+# Docker exec也可以到一个已经运行的容器的stdin，然后进行命令执行的动作。而且也不会像attach方式因为退出，导致整个容器退出。
+# docker exec -it birdben/ubuntu:v1 /bin/sh
+$ docker exec -参数 ID /bin/sh
+
 # 列出当前所有正在运行的容器
 $ docker ps
 
