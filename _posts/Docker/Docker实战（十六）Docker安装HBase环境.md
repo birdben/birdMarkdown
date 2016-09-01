@@ -11,7 +11,7 @@ categories: [Docker]
 # 下载HBase
 $ wget http://apache.fayea.com/hbase/0.98.19/hbase-0.98.19-hadoop2-bin.tar.gz
 
-# 解压Hive压缩包
+# 解压HBase压缩包
 $ tar -zxvf hbase-0.98.19-hadoop2-bin.tar.gz
 
 # 需要修改下面HBase相关的配置文件
