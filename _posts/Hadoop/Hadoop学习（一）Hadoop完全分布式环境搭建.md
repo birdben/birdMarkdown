@@ -254,6 +254,43 @@ $ hdfs dfs -ls /data/history/Found 2 itemsdrwxrwx---   - yunyu supergroup     
 
 网上一些Hadoop集群安装相关文章中，有一部分还是Hadoop老版本的配置，所以有些迷惑，像JobTracker，TaskTracker这些概念是Hadoop老版本才有的，新版本中使用ResourceManager和NodeManager替代了他们。后续的章节会详细的介绍Hadoop的相关原理以及新老版本的区别。
 
+### 使用HDFS默认端口号8020配置
+
+修改core-site.xml配置文件如下（即把端口号去掉）
+
+```
+<configuration>  <property>    <name>fs.defaultFS</name>    <value>hdfs://hadoop1</value>  </property></configuration>
+```
+
+启动HDFS服务之后，分别在Hadoop1，2，3三台服务器上查看8020端口，发现HDFS默认使用的是8020端口
+
+```
+# 启动HDFS服务
+$ ./sbin/start-dfs.sh
+
+# Hadoop1中查看8020端口
+$ lsof -i:8020COMMAND  PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAMEjava    5112 yunyu  197u  IPv4  26041      0t0  TCP hadoop1:8020 (LISTEN)java    5112 yunyu  207u  IPv4  27568      0t0  TCP hadoop1:8020->hadoop2:34867 (ESTABLISHED)java    5112 yunyu  208u  IPv4  26096      0t0  TCP hadoop1:8020->hadoop3:59852 (ESTABLISHED)java    5112 yunyu  209u  IPv4  29792      0t0  TCP hadoop1:8020->hadoop1:45542 (ESTABLISHED)java    5383 yunyu  196u  IPv4  28826      0t0  TCP hadoop1:45542->hadoop1:8020 (ESTABLISHED)
+
+# Hadoop2中查看8020端口
+$ lsof -i:8020COMMAND  PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAMEjava    4609 yunyu  234u  IPv4  24013      0t0  TCP hadoop2:34867->hadoop1:8020 (ESTABLISHED)
+
+# Hadoop3中查看8020端口
+$ lsof -i:8020COMMAND  PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAMEjava    4452 yunyu  234u  IPv4  23413      0t0  TCP hadoop3:59852->hadoop1:8020 (ESTABLISHED)
+```
+
+访问HDFS集群的方式
+
+```
+# 访问本机的HDFS集群
+hdfs dfs -ls /
+
+# 可以指定host和port访问远程的HDFS集群（这里使用hostname和port访问本地集群）
+hdfs dfs -ls hdfs://Hadoop1:8020/
+
+# 如果使用的默认端口号8020，也可以不指定端口号访问
+hdfs dfs -ls hdfs://Hadoop1/
+```
+
 
 参考文章：
 
@@ -268,3 +305,5 @@ $ hdfs dfs -ls /data/history/Found 2 itemsdrwxrwx---   - yunyu supergroup     
 - http://blog.chinaunix.net/uid-25266990-id-3900239.html
 - http://blog.csdn.net/jxnu_xiaobing/article/details/46931693
 - http://www.cnblogs.com/liuling/archive/2013/06/16/2013-6-16-01.html
+- http://www.cnblogs.com/luogankun/p/4019303.html
+- http://jacoxu.com/?p=961
