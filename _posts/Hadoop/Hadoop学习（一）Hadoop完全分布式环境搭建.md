@@ -141,12 +141,19 @@ Hadoop3
 在Hadoop1节点中生成新的SSH Key，并且将新生成的SSH Key添加到Hadoop1，2，3的authorized_keys免密码访问的配置中
 
 ```
+# 创建authorized_keys文件
+$ vi ~/.ssh/authorized_keys
+
+# 注意：这里authorized_keys文件的权限设置为600。（这点很重要，网没有设置600权限会导致登录失败）因为我这里用的root账户没有这个问题，但是如果用自己创建的其他hadoop账户，不设置600权限就会导致登录失败
+
 # Hadoop1中执行
 $ ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+# 将Hadoop1中的公钥复制进去
 $ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
 
 # Hadoop2，3中执行
 $ scp root@Hadoop1:~/.ssh/id_dsa.pub  ~/.ssh/master_dsa.pub
+# 将Hadoop2，3中的公钥复制进去
 $ cat ~/.ssh/master_dsa.pub >> ~/.ssh/authorized_keys
 
 # 在Hadoop1中测试是否可以免密码登录Hadoop1，2，3（第一次应该只需要输入yes）
