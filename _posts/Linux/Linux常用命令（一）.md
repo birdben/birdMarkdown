@@ -223,6 +223,17 @@ $ find . -iname "Hessian.properties"
 ### grep文件内容查找相关
 
 ```
+$ grep [options]
+
+[options]主要参数：
+－c：只输出匹配行的计数。
+－I：不区分大小写(只适用于单字符)。
+－h：查询多文件时不显示文件名。
+－l：查询多文件时只输出包含匹配字符的文件名。
+－n：显示匹配行及行号。
+－s：不显示不存在或无匹配文本的错误信息。
+－v：显示不包含匹配文本的所有行。
+
 # 读出logcat.log文件的内容，通过管道转发给grep作为输入内容,过滤包含"Displayed"的行，将输出内容再作为输入能过管道转发给下一个grep
 $ cat logcat.log | grep -n 'Displayed' | grep ms
 
@@ -246,6 +257,12 @@ $ grep -e 'blog\>' testgrep
 
 # 匹配aaa文件中'blog.csdn.net'的行的上下5行内容
 $ grep -5 -e blog.csdn.net aaa
+
+# 显示/Users/ben目录下的文件(不含子目录)包含blog的行
+$ grep blog /Users/ben
+
+# 显示/Users/ben目录下的文件(包含子目录)包含blog的行
+$ grep -r blog /Users/ben
 ```
 
 ### chown、useradd、groupadd、userdel、usermod、passwd、groupdel（新建用户、用户组，给用户分配权限） 
