@@ -9,7 +9,7 @@ categories: [Log]
 
 ![多个Agent的数据汇聚到同一个Agent](http://7xnrdo.com1.z0.glb.clouddn.com/2014/flume-join-agent.png)
 
-我这里是用本机模拟此架构，三个日志收集Flume Agent节点和一个日志汇总Flume Agent节点（Collector）
+我这里是用本机模拟此架构，三个日志收集Flume Agent节点和一个日志Flume Collector节点
 
 ##### Agent1节点的flume.conf配置
 
@@ -80,14 +80,14 @@ agent3.sinks.flume-avro-sink.hostname = 10.10.1.23
 agent3.sinks.flume-avro-sink.port = 41414
 ```
 
-##### 汇总Agent节点的flume_collect.conf配置
+##### Collector节点的flume_collect.conf配置
 
 ```
 agentX.sources = flume-avro-sink
 agentX.channels = chX
 agentX.sinks = flume-collect-sink
 
-# 监听的IP地址是10.10.1.23。三个Agent节点的sinks的传输协议类型要和汇总Agent节点的sources的传输协议类型一致，这里传输协议都是avro。
+# 监听的IP地址是10.10.1.23。三个Agent节点的sinks的传输协议类型要和Collector节点的sources的传输协议类型一致，这里传输协议都是avro。
 agentX.sources.flume-avro-sink.channels = chX
 agentX.sources.flume-avro-sink.type = avro
 agentX.sources.flume-avro-sink.bind = 10.10.1.23
@@ -107,15 +107,15 @@ agentX.sinks.flume-collect-sink.sink.directory = /Users/yunyu/Downloads/sinkout/
 ```
 
 ##### 注意
-这里需要注意一下sources和sinks的配置，我们在三个Agent节点都指定了sinks的hostname=10.10.1.23，但是汇总的Agent节点指定的sources的bind=10.10.1.23，这两个参数需要注意下，我开始的时候就配置错了，在sinks使用的bind=10.10.1.23，而没有使用hostname参数，Flume启动的时候就会提示"java.lang.IllegalStateException: No hostname specified"这个错误，后来查了一下官网的配置，发现是我自己把sources和sinks的绑定主机的参数搞混了
+这里需要注意一下sources和sinks的配置，我们在三个Agent节点都指定了sinks的hostname=10.10.1.23，但是Collector节点指定的sources的bind=10.10.1.23，这两个参数需要注意下，我开始的时候就配置错了，在sinks使用的bind=10.10.1.23，而没有使用hostname参数，Flume启动的时候就会提示"java.lang.IllegalStateException: No hostname specified"这个错误，后来查了一下官网的配置，发现是我自己把sources和sinks的绑定主机的参数搞混了
 
 - sources使用的是bind（意思是监听主机）
 - sinks使用的是hostname（意思是传输数据的主机）
 
-##### 分别启动汇总节点和三个Agent节点
+##### 分别启动Collector和三个Agent节点
 
 ```
-# 最好先启动汇总节点的Agent
+# 最好先启动Collector
 $ ./bin/flume-ng agent --conf ./conf/ -f conf/flume_collect.conf -Dflume.root.logger=DEBUG,console -n agentX
 $ ./bin/flume-ng agent --conf ./conf/ -f conf/flume.conf -Dflume.root.logger=DEBUG,console -n agent1
 $ ./bin/flume-ng agent --conf ./conf/ -f conf/flume.conf -Dflume.root.logger=DEBUG,console -n agent2
@@ -142,7 +142,7 @@ $ ./bin/flume-ng agent --conf ./conf/ -f conf/flume.conf -Dflume.root.logger=DEB
 2016-08-24 15:38:27,270 (New I/O  worker #3) [INFO - org.apache.avro.ipc.NettyServer$NettyServerAvroHandler.handleUpstream(NettyServer.java:171)] [id: 0x909310e6, /10.10.1.23:50822 => /10.10.1.23:41414] BOUND: /10.10.1.23:41414
 2016-08-24 15:38:27,271 (New I/O  worker #3) [INFO - org.apache.avro.ipc.NettyServer$NettyServerAvroHandler.handleUpstream(NettyServer.java:171)] [id: 0x909310e6, /10.10.1.23:50822 => /10.10.1.23:41414] CONNECTED: /10.10.1.23:50822
 ```
-我们会看到每个Agent实际上是启动了一个NettyServer进行通信，三个Agent的启动log都会在本机IP：10.10.1.23上开启一个端口号与汇总Agent的端口号41414进行通信
+我们会看到每个Agent实际上是启动了一个NettyServer进行通信，三个Agent的启动log都会在本机IP：10.10.1.23上开启一个端口号与Collector的端口号41414进行通信
 
 ```
 10.10.1.23:50791 => /10.10.1.23:41414

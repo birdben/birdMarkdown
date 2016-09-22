@@ -17,7 +17,7 @@ categories: [Log]
 
 ### Flume整合ES的相关配置
 
-#### flume_es.conf配置文件
+#### flume\_collector\_es1.conf配置文件
 
 ```
 agentX.sources = flume-avro-sink
@@ -161,7 +161,7 @@ agentX.sources.flume-avro-sink.interceptors.es_interceptor.regex = "TIME":(.*?),
 ![data](http://img.blog.csdn.net/20160825164958191?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
 
 
-##### flume_es.conf配置文件
+##### flume\_collector\_es1.conf配置文件
 
 ```
 agentX.sources = flume-avro-sink

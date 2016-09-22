@@ -45,7 +45,7 @@ $ ./gradlew assembly
 添加刚才构建好的elasticsearch-sink2-1.0.jar到Flume的classpath或者是Flume的lib目录，删除Flume的lib目录下的guava-*.jar，jackson-core-*.jar。
 
 ### 具体的配置文件
-#### Flume Agent端的flume_es2.conf配置
+#### Flume Collector端的flume\_collector\_es2.conf配置
 
 ```
 agentX.sources = flume-avro-sink
@@ -95,14 +95,14 @@ agentX.sinks.flume-es-sink.clusterName = ben-es
 agentX.sinks.flume-es-sink.serializer = com.frontier45.flume.sink.elasticsearch2.ElasticSearchLogStashEventSerializer
 ```
 
-#### flume_es2.conf这里的配置需要修改
+#### flume\_collector\_es2.conf这里的配置需要修改
 
 ```
 sink.type = com.frontier45.flume.sink.elasticsearch2.ElasticSearchSink
 sink.serializer = com.frontier45.flume.sink.elasticsearch2.ElasticSearchLogStashEventSerializer
 ```
 
-#### Avro Cient端的flume.conf配置
+#### Flume Agent端的flume_agent_file.conf配置
 
 ```
 agent3.sources = command-logfile-source
@@ -129,16 +129,16 @@ agent3.sinks.flume-avro-sink.port = 41414
 $ ./bin/elasticseach -d
 ```
 
+#### 启动Flume Collector端
+
+```
+$ ./bin/flume-ng agent --conf ./conf/ -f conf/flume_collector_es2.conf -Dflume.root.logger=DEBUG,console -n agentX
+```
+
 #### 启动Flume Agent端
 
 ```
-$ ./bin/flume-ng agent --conf ./conf/ -f conf/flume_es2.conf -Dflume.root.logger=DEBUG,console -n agentX
-```
-
-#### 启动Flume AvroCliet端
-
-```
-$ ./bin/flume-ng agent --conf ./conf/ -f conf/flume_es2.conf -Dflume.root.logger=DEBUG,console -n agentX
+$ ./bin/flume-ng agent --conf ./conf/ -f conf/flume_agent_file.conf -Dflume.root.logger=DEBUG,console -n agentX
 ```
 
 启动Flume Agent可能会遇到如下的错误：

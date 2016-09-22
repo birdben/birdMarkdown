@@ -16,7 +16,7 @@ Flume内置支持Failover和LoadBalance两种模式，这两种模式都支持Si
 
 我这里是用本机模拟此架构，Agent是采集端，分别写入Sink1和Sink2，Collector1和Collector2是Collect端。此架构允许Collector1和Collector2部分停机，需要在采集层（Agent）每一个Sink同时指向Collect层的2个相同的Flume Agent（Collector1和Collector2）。所以使用failover架构就是为了防止Collect层Flume Agent（Collector1和Collector2）因为故障或例行停机维护。
 
-##### AgentX节点的flume\_failover\_agent.conf配置
+##### Agent节点的flume\_failover\_agent.conf配置
 
 ```
 agentX.sources = sX
@@ -97,7 +97,7 @@ agent2.sinks.sk2.type = logger
 
 - 如果是多台机器实验，Collector1和Collector2的flume.conf配置其实可以是一样的，只是我这里使用的本机测试，所以需要指定不同的port来模拟2台不同的机器，flume.conf配置文件也分开了。
 
-##### 启动Flume Agent
+##### 启动Flume
 
 ```
 # 启动采集端，AgentX
@@ -151,7 +151,7 @@ $ lsof -i:44441
 
 同Failover一样，AgentX是采集端，分别写入Sink1和Sink2，Collector1和Collector2是Collect端。此架构支持负载均衡分发处理，需要在采集层（AgentX）每一个Sink同时指向Collect层的2个相同的Flume Agent（Collector1和Collector2）。所以使用loadBalance架构就是为了流量分发，防止流量过于集中到其中某些机器导致服务器负载不均衡或者过载。
 
-##### AgentX节点的flume\_loadbalance\_agent.conf配置
+##### Agent节点的flume\_loadbalance\_agent.conf配置
 
 ```
 agentX.sources = sX
@@ -185,7 +185,7 @@ agentX.sinkgroups.g1.processor.backoff=true
 agentX.sinkgroups.g1.processor.selector=round_robin
 ```
 
-##### Agent1节点的flume\_loadbalance\_collector1.conf配置
+##### Collector1节点的flume\_loadbalance\_collector1.conf配置
 
 ```
 agent1.sources = s1
@@ -206,7 +206,7 @@ agent1.sinks.sk1.type = logger
 ```
 
 
-##### Agent1节点的flume\_loadbalance\_collector2.conf配置
+##### Collector2节点的flume\_loadbalance\_collector2.conf配置
 
 ```
 agent2.sources = s2
@@ -230,7 +230,7 @@ agent2.sinks.sk2.type = logger
 
 - 如果是多台机器实验，Collector1和Collector2的flume.conf配置其实可以是一样的，只是我这里使用的本机测试，所以需要指定不同的port来模拟2台不同的机器，flume.conf配置文件也分开了。
 
-##### 启动Flume Agent
+##### 启动Flume
 
 ```
 # 启动采集端，AgentX
