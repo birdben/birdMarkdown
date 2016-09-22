@@ -9,7 +9,7 @@ categories: [Log]
 
 ![多个Agent的数据汇聚到同一个Agent](http://7xnrdo.com1.z0.glb.clouddn.com/2014/flume-join-agent.png)
 
-我这里是用本机模拟此架构，三个日志收集Flume Agent节点和一个日志汇总Flume Agent节点
+我这里是用本机模拟此架构，三个日志收集Flume Agent节点和一个日志汇总Flume Agent节点（Collector）
 
 ##### Agent1节点的flume.conf配置
 

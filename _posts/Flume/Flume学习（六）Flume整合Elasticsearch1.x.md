@@ -117,6 +117,7 @@ a1.sources.r1.interceptors.i1.serializers.s1.name = one
 a1.sources.r1.interceptors.i1.serializers.s2.name = two
 a1.sources.r1.interceptors.i1.serializers.s3.name = three
 ```
+
 The extracted event will contain the same body but the following headers will have been added one=>1, two=>2, three=>3
 
 上面官网的例子就是从日志1:2:3.4foobar5中按照我们的格式用":"号分割并且提取后面的1位数字，并且按照提取出来的值顺序对应字段名称为：one，two，three，最后转换出来的结果就是one=>1, two=>2, three=>3
