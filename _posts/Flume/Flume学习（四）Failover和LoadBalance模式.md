@@ -243,6 +243,13 @@ $ ./bin/flume-ng agent --conf ./conf/ -f conf/flume_loadbalance_collector2.conf 
 
 这个时候只要我们不断有日志采集会发现日志会分别输出到Collector1和Collector2的控制台了，说明我们的loadbalance机制生效了。
 
+最后给出别人博客总结的三种模式的对比图，看完就非常清晰明了了
+
+![Default](http://img.blog.csdn.net/20160923160614674?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+![Failover](http://img.blog.csdn.net/20160923160704878?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+![LoadBalance](http://img.blog.csdn.net/20160923160718087?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
 
 参考文章：
 
@@ -251,3 +258,4 @@ $ ./bin/flume-ng agent --conf ./conf/ -f conf/flume_loadbalance_collector2.conf 
 - http://www.cnblogs.com/lishouguang/p/4558790.html
 - http://blog.csdn.net/qianshangding0708/article/details/49300427
 - http://www.aboutyun.com/blog-70-465.html
+- http://jinnianshilongnian.iteye.com/blog/2261225
