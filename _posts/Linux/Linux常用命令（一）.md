@@ -59,6 +59,9 @@ netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
 ```
 # 查看8080端口号对应的进程
 $ lsof -i:8080
+
+# 找到被删除的却还被进程占用的文件
+$ lsof | grep deleted
 ```
 
 ### ps查看进程
@@ -263,6 +266,71 @@ $ grep blog /Users/ben
 
 # 显示/Users/ben目录下的文件(包含子目录)包含blog的行
 $ grep -r blog /Users/ben
+```
+
+### sed结合grep命令批量替换文件内容
+
+```
+# 将当前目录(包括子目录)中所有以test开头的txt文件中的zzzz字符串替换为oooo字符串
+sed -i 's/zzzz/oooo/g' `grep zzzz -rl --include="test_*.txt" ./`
+
+# sed参数
+-i : 表示操作的是文件，``括起来的grep命令，表示将grep命令的的结果作为操作文件
+s/zzzz/oooo/ : 表示查找zzzz并替换为oooo
+g : 表示一行中有多个zzzz的时候，都替换，而不是仅替换第一个
+
+# grep参数
+-r : 表示查找所有子目录
+-l : 表示仅列出符合条件的文件名，用来传给sed命令做操作
+--include="test_*.txt" : 表示仅查找test开头的txt文件
+./ : 表示要查找的根目录为当前目录
+```
+
+### du定位大文件
+
+```
+# 查看当前目录下的所有文件大小（不包括下级目录，x参数会去除掉mount上去的目录）
+# 如果有子文件夹，那就进去继续执行'du -shx *'一级一级地找
+$ du -shx *
+
+# 如果有文件被删除，却被某进程占用，并且还在写
+# 找到被删除的却还被进程占用的文件，进程也被列出，把相关的进程重启一遍，空间就被释放了。
+$ lsof | grep deleted
+
+# 参数
+# -b : 以Byte单位输出
+# -k : 以KB为单位输出
+# -m : 以MB为单位输出
+# -h : 以K，M，G为单位显示
+# -s : 仅显示总计，只列出最后加总的值
+
+# 找出大于2000m的文件夹
+$ du -m ~/Downloads | awk '$1 > 2000'
+3048	/Users/yunyu/Downloads/develop
+7966	/Users/yunyu/Downloads/install
+17671	/Users/yunyu/Downloads/yunyu
+31673	/Users/yunyu/Downloads
+
+# 以可阅读的单位显示某文件夹的大小
+$ du -sh ~/Downloads
+31G		/Users/yunyu/Downloads
+
+# 以可阅读的单位显示某文件的大小
+$ du -h command.log
+52K		command.log
+
+# 统计多个文件的大小总和
+$ du -ch command.log command_1.log
+52K		command.log
+4.0K	command_1.log
+56K		total
+
+# 找出大于2000m的文件夹，并且按照文件大小排序
+du -m ~/Downloads | awk '$1 > 2000' | sort -nr | more
+31673   /Users/yunyu/Downloads
+17671   /Users/yunyu/Downloads/yunyu
+7966    /Users/yunyu/Downloads/install
+3048    /Users/yunyu/Downloads/develop
 ```
 
 ### chown、useradd、groupadd、userdel、usermod、passwd、groupdel（新建用户、用户组，给用户分配权限） 
