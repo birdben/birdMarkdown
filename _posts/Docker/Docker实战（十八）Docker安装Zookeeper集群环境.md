@@ -112,9 +112,9 @@ server.3=zoo3:2888:3888
 $ docker build -t "birdben/zookeeper_cluster:v1" .
 # 启动Docker容器，这里分别对每个docker容器指定了不同的hostname
 # 需要暴露2181客户端连接端口号，否则Docker容器外无法连接到zookeeper集群
-$ sudo docker run -p 2181:2181 -h zoo1 --name zoo1 -t -i 'birdben/zookeeper_cluster:v1'
-$ sudo docker run -h zoo2 --name zoo2 -t -i 'birdben/zookeeper_cluster:v1'
-$ sudo docker run -h zoo3 --name zoo3 -t -i 'birdben/zookeeper_cluster:v1'
+$ sudo docker run -p 2181:2181 -p 2888:2888 -p 3888:3888 -h zoo1 --name zoo1 -t -i 'birdben/zookeeper_cluster:v1'
+$ sudo docker run -p 2181:2181 -p 2888:2888 -p 3888:3888 -h zoo2 --name zoo2 -t -i 'birdben/zookeeper_cluster:v1'
+$ sudo docker run -p 2181:2181 -p 2888:2888 -p 3888:3888 -h zoo3 --name zoo3 -t -i 'birdben/zookeeper_cluster:v1'
 
 # 查询Docker容器对应的IP地址
 $ sudo docker inspect --format='{{.NetworkSettings.IPAddress}}' ${CONTAINER_ID}
@@ -185,6 +185,7 @@ WatchedEvent state:SyncConnected type:None path:null
 - myid的配置也是每个Docker容器都不一样，最好跟hosts配置对应
 - 需要Docker容器外连接zookeeper集群需要在启动Docker容器时，指定一个Docker容器对外开放2181客户端连接端口号，否则Docker容器外无法连接到zookeeper集群
 - 如果查看zookeeper运行状态提示有问题
+- 值得重点注意的一点是，所有三个机器都应该打开端口 2181、2888 和 3888。在本例中，端口 2181 由 ZooKeeper 客户端使用，用于连接到 ZooKeeper 服务器；端口 2888 由对等 ZooKeeper 服务器使用，用于互相通信；而端口 3888 用于领导者选举。您可以选择自己喜欢的任何端口。通常建议在所有 ZooKeeper 服务器上使用相同的端口。
 
 ```
 JMX enabled by default
