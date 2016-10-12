@@ -41,13 +41,13 @@ $ tar -zxvf hadoop-2.7.1.tar.gz
 
 ##### 配置环境变量/etc/profile
 ```
-JAVA_HOME=/usr/local/javaexport JAVA_HOMEHADOOP_HOME=/usr/local/hadoopexport HADOOP_HOMEPATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$PATHexport PATH
+JAVA_HOME=/usr/local/javaexport JAVA_HOMEHADOOP_HOME=/usr/local/hadoopexport HADOOP_HOMEPATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATHexport PATH
 ```
 
 ##### 配置HADOOP_HOME/etc/hadoop/hadoop-env.sh，添加以下内容
 ```
 export JAVA_HOME=/usr/local/java
-export PATH=$PATH:$HADOOP_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 ```
 
 ##### 配置HADOOP_HOME/etc/hadoop/yarn-env.sh，添加以下内容
