@@ -13,6 +13,20 @@ categories: [Log]
 
 之前介绍了Flume整合ES，本篇主要介绍Flume整合HDFS，将日志内容通过Flume传输给Hadoop，并且保存成文件存储在HDFS上。
 
+### 需要依赖Hadoop的jar包
+
+下面的jar包路径根据自己的实际环境情况修改。
+
+```
+cp ~/Downloads/develop/hadoop-2.7.1/share/hadoop/common/hadoop-common-2.7.1.jar ~/dev/flume-1.6.0/lib
+cp ~/Downloads/develop/hadoop-2.7.1/share/hadoop/common/lib/commons-configuration-1.6.jar ~/dev/flume-1.6.0/lib
+cp ~/Downloads/develop/hadoop-2.7.1/share/hadoop/common/lib/hadoop-auth-2.7.1.jar ~/dev/flume-1.6.0/lib
+cp ~/Downloads/develop/hadoop-2.7.1/share/hadoop/httpfs/tomcat/webapps/webhdfs/WEB-INF/lib/hadoop-hdfs-2.7.1.jar ~/dev/flume-1.6.0/lib
+cp ~/Downloads/develop/hadoop-2.7.1/share/hadoop/hdfs/lib/htrace-core-3.1.0-incubating.jar ~/dev/flume-1.6.0/lib
+# 覆盖已有的commons-io.jar
+cp ~/Downloads/develop/hadoop-2.7.1/share/hadoop/common/lib/commons-io-2.4.jar ~/dev/flume-1.6.0/lib
+```
+
 ### command.log日志文件
 
 ```
