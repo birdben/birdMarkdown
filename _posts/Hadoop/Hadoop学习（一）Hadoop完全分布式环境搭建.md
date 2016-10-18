@@ -128,6 +128,14 @@ Hadoop2
 Hadoop3
 ```
 
+##### 配置/etc/hostname
+
+Hadoop1,2,3分别修改自己的/etc/hostname文件，如果这里不修改的话，后面使用Hive做离线查询会遇到问题，具体问题请参考《Hive学习（二）使用Hive进行离线分析日志》
+
+```
+hadoop1
+```
+
 ##### 配置主机名/etc/hosts
 
 这里Hadoop1是namenode，Hadoop2和Hadoop3是datanode
