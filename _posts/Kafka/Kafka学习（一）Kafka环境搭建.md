@@ -107,14 +107,14 @@ $ ./bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic test1Topi
 # isr：是备份节点列表的子集，表示正在进行同步log的工作状态的节点列表
 ```
 
-##### 启动producer服务，向kafka_cluster_topic的Topic中发送消息
+##### 启动producer服务，向kafka\_cluster\_topic的Topic中发送消息
 ```
 $ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic kafka_cluster_topic
 this is a message
 my name is birdben
 ```
 
-##### 启动consumer服务，从kafka_cluster_topic的Topic中接收消息
+##### 启动consumer服务，从kafka\_cluster\_topic的Topic中接收消息
 ```
 $ ./bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic kafka_cluster_topic --from-beginningthis is a message
 my name is birdben

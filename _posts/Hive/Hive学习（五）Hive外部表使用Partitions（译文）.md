@@ -1,6 +1,6 @@
 ---
-title: "Hive学习（三）Hive外部表使用Partitions（译文）"
-date: 2016-10-13 20:36:31
+title: "Hive学习（五）Hive外部表使用Partitions（译文）"
+date: 2016-10-18 20:36:31
 tags: [Hive, HDFS]
 categories: [Hadoop]
 ---
