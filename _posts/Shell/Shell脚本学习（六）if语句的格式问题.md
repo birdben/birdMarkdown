@@ -52,70 +52,115 @@ fi
 接下来介绍一些if语句常用的判断语句
 
 ```
-－d：判断指定的变量是否为目录
-－z：判断指定的变量是否存在值
-－f：判断指定的变量是否为文件
-－L：判断指定的变量是否为符号链接（软链接）
-－r：判断指定的变量是否可读
-－w：判断指定的变量是否可写
-－x：判断存在的对象是否可以执行
-!：测试条件的否定符号 
+# 文件表达式
+-e filename：如果filename存在（不论filename是文件名还是目录名），则为真
+-d filename：如果filename存在（filename必须是目录名），则为真
+-f filename：如果filename存在（filename必须是文件名），则为真
+-s filename：如果filename内容不为空（filename必须是文件名），则为真
+
+# 字符串变量表达式
+if [ -z $var ]：如果var的值为空，则为真
+if [ -n $var ]：如果var的值为非空，则为真
+if [ $var ]：如果var的值为非空，则为真
 ```
 
+下面是一些常用的例子
 
 ```
-#!/bin/bash
+filePath=/Users/yunyu/Downloads/test
+if [ -e $filePath ]; then
+	echo "文件/目录存在"
+else 
+	echo "文件/目录不存在"
+fi
 
-# 判断文件夹是否存在
-if [ -d $folder ]; then
-	echo "目录存在！"
+if [ -d $filePath ]; then
+	echo "目录存在"
+else 
+	echo "目录不存在"
+fi
+
+if [ -f $filePath ]; then
+	echo "文件存在"
+else 
+	echo "文件不存在"
+fi
+
+if [ -s $filePath ]; then
+	echo "文件内容不为空"
+else 
+	echo "文件内容为空"
+fi
+
+#var="test";
+var="";
+# -z 判断一个变量的值是否为空
+if [ -z "$var" ]; then
+	echo "var is empty"
 else
-	echo "目录不存在！"
+	echo "var is $var"
 fi
 
-# 如果文件夹不存在，创建文件夹
-if [ ! -d "/test/folder" ]; then
-  mkdir /test/folder
+# -n 判断一个变量是否为非空
+if [ -n "$var" ]; then
+	echo "var is not empty, value is $var"
+else
+	echo "var is empty"
 fi
 
-# shell判断文件,目录是否存在或者具有权限
-folder="/software/es/"
-file="/software/es/config/elasticsearch.yml"
-
-# -x 参数判断 $folder 是否存在并且是否具有可执行权限
-if [ ! -x "$folder"]; then
-  mkdir "$folder"
-fi
-
-# -d 参数判断 $folder 是否存在
-if [ ! -d "$folder"]; then
-  mkdir "$folder"
-fi
-
-# -f 参数判断 $file 是否存在
-if [ ! -f "$file" ]; then
-  touch "$file"
-fi
-
-# -n 判断一个变量是否有值
+# ! -n 和 -z 用法一样
 if [ ! -n "$var" ]; then
-  echo "$var is empty"
+	echo "var is empty"
+else
+	echo "var is $var"
 fi
 
+if [ "$var" ]; then
+	echo "if var is $var"
+else
+	echo "if var is blank"
+fi
+
+var1="1";
+var2="2";
 # 判断两个变量是否相等
 if [ "$var1" = "$var2" ]; then
-  echo '$var1 equals $var2'
+	echo "$var1 equals $var2"
 else
-  echo '$var1 not equals $var2'
+	echo "$var1 not equals $var2"
+fi
+
+# 判断两个变量是否不相等
+if [ "$var1" != "$var2" ]; then
+	echo "$var1 not equals $var2"
+else
+	echo "$var1 equals $var2"
+fi
+
+num1=1;
+num2=2;
+# 算术比较运算符
+if [ "$num1" -eq "$num2" ]; then
+	echo "$num1 equals $num2"
+elif [ "$num1" -lt "$num2" ]; then
+	echo "$num1 less than $num2"
+elif [ "$num1" -le "$num2" ]; then
+	echo "$num1 less than equals $num2"
+elif [ "$num1" -gt "$num2" ]; then
+	echo "$num1 great than $num2"
+elif [ "$num1" -ge "$num2" ]; then
+	echo "$num1 great than equals $num2"
+elif [ "$num1" -ne "$num2" ]; then
+	echo "$num1 not equals $num2"
 fi
 
 # 判断变量是否模糊匹配
 base_version='2.2.0'
 if [[ $base_version =~ 1.* ]]; then
-  base_version='1.x'
+	base_version='1.x'
 fi
 if [[ $base_version =~ 2.* ]]; then
-  base_version='2.x'
+	base_version='2.x'
 fi
 echo $base_version
 ```
