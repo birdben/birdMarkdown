@@ -363,14 +363,35 @@ $ groupdel 用户组
 # 修改组
 $ groupmod 选项 用户组
 
-# 修改用户所在组（把某个用户改为新的用户组）
+# 修改用户所在组（把某个用户改为新的用户组，这样会离开其他用户组）
 $ usermod -g 用户组 用户名
+
+# 修改用户所在组（-a代表append，给某个用户添加一个新的组，而不必离开 其他用户组）
+$ usermod -a -G 用户组 用户名
 
 # 分配权限(修改某个目录的所属用户和用户组)
 $ chown -R hadoop:hadoop /usr/hadoop/
 
 # Linux中查看所有系统用户命令
-cat /etc/passwd
+$ cat /etc/passwd
+
+# Linux中查看所有组用户
+$ cat /etc/group
+
+# 查看当前用户所属组
+$ groups
+
+# 查看root用户所属组
+$ groups root
+
+# 查看当前用户
+$ whoami
+
+# 添加用户到用户组
+$ gpasswd -a 用户名 用户组
+
+# 从用户组中删除用户
+$ gpasswd -d 用户名 用户组
 ```
 
 ### 查看用户登录信息
