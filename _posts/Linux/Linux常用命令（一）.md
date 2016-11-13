@@ -71,6 +71,9 @@ $ lsof | grep deleted
 # grep 是搜索
 $ ps -ef | grep 80
 
+# 根据进程ID查看进程
+$ pe -eLf | grep PID
+
 # 查看Linux进程
 $ ps -ef | grep tomcat
 
