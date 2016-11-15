@@ -80,7 +80,7 @@ Hadoop Hive HBaseSpark Hive HadoopKafka HBase ES Logstash StormFlume Kafka Ha
                 </descriptorRefs>
                 <archive>
                     <manifest>
-                        <mainClass>com.birdben.mapreduce.demo.WordCount</mainClass>
+                        <mainClass>com.birdben.mapreduce.demo.WordCountMain</mainClass>
                     </manifest>
                 </archive>
             </configuration>
@@ -143,6 +143,7 @@ $ cat outputfile/WordCount/part-r-00000 ES	1Flume	1HBase	2Hadoop	3Hive	2Ka
 
 参考文章：
 
+- http://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html
 - http://www.cnblogs.com/xwdreamer/archive/2011/01/04/2297049.html
 - http://blog.csdn.net/lisonglisonglisong/article/details/47125319
 - http://www.cnblogs.com/xia520pi/archive/2012/05/16/2504205.html
