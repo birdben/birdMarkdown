@@ -1,5 +1,5 @@
 ---
-title: "Kibana学习（一）"
+title: "Kibana学习（一）环境安装总结"
 date: 2016-08-16 23:55:39
 tags: [Kibana]
 categories: [Log]

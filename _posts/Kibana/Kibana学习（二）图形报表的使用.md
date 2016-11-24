@@ -1,5 +1,5 @@
 ---
-title: "Kibana学习（二）"
+title: "Kibana学习（二）图形报表的使用"
 date: 2016-08-17 01:35:19
 tags: [Kibana]
 categories: [Log]
@@ -117,3 +117,7 @@ Vertical bar chart	|柱状图		|
 	Order By:			metric:Count
 }
 ```
+
+参考文章：
+
+- http://blog.csdn.net/ming_311/article/details/50619859
