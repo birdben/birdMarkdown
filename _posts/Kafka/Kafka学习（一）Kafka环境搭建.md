@@ -7,7 +7,7 @@ categories: [MQ]
 
 ### Kafka安装
 ```
-$ wget https://www.apache.org/dyn/closer.cgi?path=/kafka/0.10.0.0/kafka_2.11-0.10.0.0.tgz
+$ wget http://apache.fayea.com/kafka/0.10.0.0/kafka_2.11-0.10.0.0.tgz
 $ tar -xzf kafka_2.11-0.10.0.0.tgz
 $ mv kafka_2.11-0.10.0.0 kafka_2.11
 $ cd kafka_2.11

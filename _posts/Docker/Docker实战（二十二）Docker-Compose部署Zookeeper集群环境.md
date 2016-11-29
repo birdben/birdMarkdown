@@ -122,13 +122,16 @@ networks:
 3. 需要设置/etc/hosts配置文件中的host配置
 4. 将Docker容器中的/opt/data和/opt/log目录挂在到宿主机的指定目录下
 5. 设置了一个网卡zoo_net，网段是172.18.0.0，网关是172.18.0.1
-6. Docker-Compose的version 2版本语法有些变化，注意检查一下networks的配置，否则启动docker-compose up会无法启动
+6. Docker-Compose的version 2版本语法有些变化，如果使用docker-compose version: 1.6以下版本启动可能会遇到Unsupported config option for services service: 'zoo1'问题，为了支持verion2的语法最好使用最新版本（目前最新版本是1.8.1）。还要注意检查一下networks的配置，否则启动docker-compose up会无法启动
 
 #### 启动Docker-Compose
 
 ```
 # 启动Docker-Compose后，会自动创建Docker容器并且启动
 $ docker-compose up
+
+# 后台启动使用
+$ docker-compose up -d
 
 # 查看当前正在运行的Docker容器
 $ docker-compose ps
