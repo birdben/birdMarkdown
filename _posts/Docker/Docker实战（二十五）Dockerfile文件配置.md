@@ -43,7 +43,7 @@ RUN ["executable", "param1", "param2"]
 
 ### CMD
 
-CMD会在启动容器run时执行，构建镜像build时不执行。如果用户启动容器run时指定了运行的命令，则会覆盖掉CMD指定的命令。
+CMD指令的主要功能是在build完成后，为了给docker run启动到容器时提供默认命令或参数，构建镜像build时不执行。如果用户启动容器run时指定了运行的命令，则会覆盖掉CMD指定的命令。
 
 注意：CMD只有最后一个有效
 
@@ -58,7 +58,6 @@ CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
 $ /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
 ```
-
 
 ### ENTRYPOINT
 
@@ -84,6 +83,100 @@ $ docker run -it birdDocker "this is a run test"
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["zkServer.sh", "start-foreground"]
+```
+
+### RUN, CMD, ENTRYPOINT区别
+
+RUN是在build成镜像时就运行的，先于CMD和ENTRYPOINT的。Build完成了，RUN也运行完成后，再运行CMD或者ENTRYPOINT。CMD会在每次启动容器的时候运行，而RUN只在创建镜像时执行一次，固化在image中。
+
+ENTRYPOINT和CMD的不同点在于执行docker run时参数传递方式，CMD指定的命令可以被docker run传递的命令覆盖，例如，如果用CMD指定：
+
+```
+...
+CMD ["echo"]
+```
+
+然后运行
+
+```
+docker run CONTAINER_NAME echo foo
+```
+
+那么CMD里指定的echo会被新指定的echo覆盖，所以最终相当于运行echo foo，所以最终打印出的结果就是：
+
+```
+foo
+```
+
+而ENTRYPOINT会把容器名后面的所有内容都当成参数传递给其指定的命令（不会对命令覆盖），比如：
+
+```
+...
+ENTRYPOINT ["echo"]
+```
+
+然后运行
+
+```
+docker run CONTAINER_NAME echo foo
+```
+
+则CONTAINER_NAME后面的echo foo都作为参数传递给ENTRYPOING里指定的echo命令了，所以相当于执行了
+
+```
+echo "echo foo"
+```
+
+最终打印出的结果就是：
+
+```
+echo foo
+```
+
+另外，在Dockerfile中，ENTRYPOINT指定的参数比运行docker run时指定的参数更靠前，比如：
+
+```
+...
+ENTRYPOINT ["echo", "foo"]
+```
+
+执行
+
+```
+docker run CONTAINER_NAME bar
+```
+
+相当于执行了：
+
+```
+echo foo bar
+```
+
+打印出的结果就是：
+
+```
+foo bar
+```
+
+Dockerfile中只能指定一个ENTRYPOINT，如果指定了很多，只有最后一个有效。
+
+执行docker run命令时，也可以添加-entrypoint参数，会把指定的参数继续传递给ENTRYPOINT，例如：
+
+```
+...
+ENTRYPOINT ["echo","foo"]
+```
+
+然后执行：
+
+```
+docker run CONTAINER_NAME --entrypoint bar
+```
+
+那么，就相当于执行了echo foo bar，最终结果就是
+
+```
+foo bar
 ```
 
 ### EXPOSE
@@ -154,7 +247,7 @@ COPY local_files /temp
 
 ### ADD与COPY的区别
 
-ADD与COPY是完全不同的命令。COPY是这两个中最简单的，它只是从主机复制一份文件或者目录到镜像里。ADD同样可以这么做，但是它还有更神奇的功能，像解压TAR文件或从远程URLs获取文件。为了降低Dockerfile的复杂度以及防止意外的操作，最好用COPY来复制文件。
+ADD与COPY是完全不同的命令。COPY是这两个中最简单的，它只是从主机复制一份文件或者目录到镜像里。ADD同样可以这么做，但是它还有更神奇的功能，像解压TAR文件或从远程URLs获取文件。为了降低Dockerfile的复杂度以及防止意外的操作，最好用COPY来复制文件。Best Practices for Writing Dockerfiles建议尽量使用COPY，并使用RUN与COPY的组合来代替ADD，这是因为虽然COPY只支持本地文件拷贝到container，但它的处理比ADD更加透明，建议只在复制tar文件时使用ADD，如ADD trusty-core-amd64.tar.gz /。
 
 ```
 FROM busybox:1.24
@@ -248,3 +341,6 @@ FROM my-node
 
 - http://www.cnblogs.com/lienhua34/p/5170335.html
 - https://yeasy.gitbooks.io/docker_practice/content/image/dockerfile/onbuild.html
+- http://seanlook.com/2014/11/17/dockerfile-introduction/
+- https://docs.docker.com/articles/dockerfile_best-practices/
+- https://segmentfault.com/q/1010000000417103
