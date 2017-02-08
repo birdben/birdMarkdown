@@ -262,6 +262,12 @@ $ hdfs dfs -ls /data/history/Found 2 itemsdrwxrwx---   - yunyu supergroup     
 
 网上一些Hadoop集群安装相关文章中，有一部分还是Hadoop老版本的配置，所以有些迷惑，像JobTracker，TaskTracker这些概念是Hadoop老版本才有的，新版本中使用ResourceManager和NodeManager替代了他们。后续的章节会详细的介绍Hadoop的相关原理以及新老版本的区别。
 
+最近好久没有用Hadoop了，突然要做日志持久化，居然本地的Hadoop集群环境起不来了，后来发现是自己启动方式错了，三个Hadoop节点只需要在NameNode执行start-dfs.sh和start-yarn.sh脚本，而我却分别在三个Hadoop节点都去做了启动操作，发现下面的提示信息才反应过来，真是太尴尬了。。
+
+```
+$ start-dfs.shStarting namenodes on [hadoop1]yunyu@hadoop1's password: hadoop1: namenode running as process 9117. Stop it first.
+```
+
 ### 使用HDFS默认端口号8020配置
 
 修改core-site.xml配置文件如下（即把端口号去掉）
@@ -299,6 +305,52 @@ hdfs dfs -ls hdfs://Hadoop1:8020/
 hdfs dfs -ls hdfs://Hadoop1/
 ```
 
+### 解决Unable to load native-hadoop library for your platform
+
+```
+# 线上环境安装Hadoop的时候遇到下面的错误
+$ start-dfs.sh
+17/02/07 16:00:24 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Starting namenodes on [yy-logs-hdfs01]
+yy-logs-hdfs01: starting namenode, logging to /usr/local/hadoop-2.7.1/logs/hadoop-hadoop-namenode-yy-logs-hdfs01.out
+localhost: starting datanode, logging to /usr/local/hadoop-2.7.1/logs/hadoop-hadoop-datanode-yy-logs-hdfs01.out
+Starting secondary namenodes [yy-logs-hdfs01]
+yy-logs-hdfs01: starting secondarynamenode, logging to /usr/local/hadoop-2.7.1/logs/hadoop-hadoop-secondarynamenode-yy-logs-hdfs01.out
+17/02/07 16:00:39 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+
+# 于是百度Google查找原因，网上有人说是因为Apache提供的hadoop本地库是32位的，而在64位的服务器上就会有问题，因此需要自己编译64位的版本。
+# 检查native库，发现果然是这个原因
+$ hadoop checknative -a
+17/02/07 16:06:34 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Native library checking:
+hadoop:  false
+zlib:    false
+snappy:  false
+lz4:     false
+bzip2:   false
+openssl: false
+17/02/07 16:06:34 INFO util.ExitUtil: Exiting with status 1
+
+# 从下面的地址下载Hadoop对应版本已经编译好的Native库，我这里下载的是hadoop-2.7.x版本的
+# http://dl.bintray.com/sequenceiq/sequenceiq-bin/
+
+# 将下载的Native库解压到$HADOOP_HOME下的lib和lib/native目录下
+$ tar -xvf hadoop-native-64-2.7.0.tar -C /usr/local/hadoop/lib/
+$ tar -xvf hadoop-native-64-2.7.0.tar -C /usr/local/hadoop/lib/native/
+
+# 重新检查native库
+$ hadoop checknative -a
+17/02/07 16:26:56 WARN bzip2.Bzip2Factory: Failed to load/initialize native-bzip2 library system-native, will use pure-Java version
+17/02/07 16:26:56 INFO zlib.ZlibFactory: Successfully loaded & initialized native-zlib library
+Native library checking:
+hadoop:  true /usr/local/hadoop-2.7.1/lib/libhadoop.so.1.0.0
+zlib:    true /lib64/libz.so.1
+snappy:  false
+lz4:     true revision:99
+bzip2:   false
+openssl: true /usr/lib64/libcrypto.so
+17/02/07 16:26:56 INFO util.ExitUtil: Exiting with status 1
+```
 
 参考文章：
 
@@ -315,3 +367,5 @@ hdfs dfs -ls hdfs://Hadoop1/
 - http://www.cnblogs.com/liuling/archive/2013/06/16/2013-6-16-01.html
 - http://www.cnblogs.com/luogankun/p/4019303.html
 - http://jacoxu.com/?p=961
+- http://blog.csdn.net/jack85986370/article/details/51902871
+- http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/NativeLibraries.html
