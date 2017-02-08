@@ -32,7 +32,8 @@ Kafka删除Topic的两种方式：
 ##### 修改server.properties
 ```
 # 默认是false
-delete.topic.enable = true
+# 注意等号前后一定不能有空格，否则配置会不生效（亲自踩过的坑）
+delete.topic.enable=true
 ```
 
 ##### 验证方式一
