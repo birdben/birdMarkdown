@@ -94,6 +94,16 @@ ps [选项]
 -x 显示没有控制终端地进程
 ```
 
+### nohup后台启动
+```
+# 格式：nohup command &
+# 后台启动Kibana，会在执行此命令的目录下生成一个nohup.out日志文件
+$ nohup kibana &
+
+# 后台启动Logstash，并且指定日志输出到logstash.out文件中
+$ nohup logstash -f ${LOGSTASH_HOME}/conf/logstash.conf 2>${LOGSTASH_HOME}/bin/logstash.out 1>${LOGSTASH_HOME}/bin/logstash.out &
+```
+
 ### Linux性能监控
 ```
 # 查看服务cpu利用
@@ -224,6 +234,23 @@ $ find . -size +1000000c（在当前目录下查找文件长度大于1 M字节�
 
 # 在当前目录及所有子目录中查找filename(忽略大小写)
 $ find . -iname "Hessian.properties"
+
+# 按照多种条件来查找
+# type是file，但不是link
+# maxdepth是1
+# name是*，但不是gz，zip，pid结尾的文件
+# -mtime是表示文件修改时间为大于1天的文件，即距离当前时间2天（48小时）之外的文件
+$ find . -maxdepth 1 -type f -name "*" ! -name "*.gz"  ! -name "*.zip" ! -name "*.pid" ! -type l -mtime +1
+```
+
+### find结合xargs命令批量删除文件
+
+```
+# 删除当前目录下除了test.txt的其他所有文件
+$ find . -type f -not -name test.txt | xargs rm -v
+
+# 默认情况下，find命令每输出一个文件名，后面都会接着输出一个换行符 ('n')，因此我们看到的find的输出都是一行一行的。xargs默认是以空白字符（空格，TAB，换行符）来分割记录的，如果文件名中带有空格这样会被xargs分割开，删除的时候就会找不到该文件了。所以让find在打印出一个文件名之后接着输出一个NULL字符 ('') 而不是换行符，然后再告诉xargs也用NULL字符来作为记录的分隔符。这样就解决了上面的问题。也就是find的-print0和xargs的-0的作用。
+$ find . -type f -not -name test.txt -print0 | xargs -0 rm -v
 ```
 
 ### grep文件内容查找相关
@@ -233,12 +260,115 @@ $ grep [options]
 
 [options]主要参数：
 －c：只输出匹配行的计数。
+－e <范本样式>：指定字符串作为查找文件内容的范本样式。
 －I：不区分大小写(只适用于单字符)。
 －h：查询多文件时不显示文件名。
 －l：查询多文件时只输出包含匹配字符的文件名。
 －n：显示匹配行及行号。
 －s：不显示不存在或无匹配文本的错误信息。
 －v：显示不包含匹配文本的所有行。
+－o：只输出文件中匹配到的部分。
+
+-a 不要忽略二进制数据。
+-A<显示列数> 除了显示符合范本样式的那一行之外，并显示该行之后的内容。
+-b 在显示符合范本样式的那一行之外，并显示该行之前的内容。
+-c 计算符合范本样式的列数。
+-C<显示列数>或-<显示列数> 除了显示符合范本样式的那一列之外，并显示该列之前后的内容。
+-d<进行动作> 当指定要查找的是目录而非文件时，必须使用这项参数，否则grep命令将回报信息并停止动作。
+-e<范本样式> 指定字符串作为查找文件内容的范本样式。
+-E 将范本样式为延伸的普通表示法来使用，意味着使用能使用扩展正则表达式。
+-f<范本文件> 指定范本文件，其内容有一个或多个范本样式，让grep查找符合范本条件的文件内容，格式为每一列的范本样式。
+-F 将范本样式视为固定字符串的列表。
+-G 将范本样式视为普通的表示法来使用。
+-h 在显示符合范本样式的那一列之前，不标示该列所属的文件名称。
+-H 在显示符合范本样式的那一列之前，标示该列的文件名称。
+-i 胡列字符大小写的差别。
+-l 列出文件内容符合指定的范本样式的文件名称。
+-L 列出文件内容不符合指定的范本样式的文件名称。
+-n 在显示符合范本样式的那一列之前，标示出该列的编号。
+-q 不显示任何信息。
+-R/-r 此参数的效果和指定“-d recurse”参数相同。
+-s 不显示错误信息。
+-v 反转查找。
+-w 只显示全字符合的列。
+-x 只显示全列符合的列。
+-y 此参数效果跟“-i”相同。
+-o 只输出文件中匹配到的部分。
+
+grep正则表达式元字符集：
+
+- ^ 锚定行的开始 如：'^grep'匹配所有以grep开头的行。 
+- $ 锚定行的结束 如：'grep$'匹配所有以grep结尾的行。 
+- . 匹配一个非换行符的字符 如：'gr.p'匹配gr后接一个任意字符，然后是p。 
+- * 匹配零个或多个先前字符 如：'*grep'匹配所有一个或多个空格后紧跟grep的行。 .*一起用代表任意字符。
+- [] 匹配一个指定范围内的字符，如'[Gg]rep'匹配Grep和grep。 
+- [^] 匹配一个不在指定范围内的字符，如：'[^A-FH-Z]rep'匹配不包含A-R和T-Z的一个字母开头，紧跟rep的行。 
+- \(..\) 标记匹配字符，如'\(love\)'，love被标记为1。 
+- \ 锚定单词的开始，如:'\匹配包含以grep开头的单词的行。 
+- \> 锚定单词的结束，如'grep\>'匹配包含以grep结尾的单词的行。 
+- x\{m\} 重复字符x，m次，如：'0\{5\}'匹配包含5个o的行。 
+- x\{m,\} 重复字符x,至少m次，如：'o\{5,\}'匹配至少有5个o的行。 
+- x\{m,n\}重复字符x，至少m次，不多于n次，如：'o\{5,10\}'匹配5--10个o的行。
+- \w 匹配文字和数字字符，也就是[A-Za-z0-9]，如：'G\w*p'匹配以G后跟零个或多个文字或数字字符，然后是p。
+- \b 单词锁定符，如: '\bgrep\b'只匹配grep。
+
+关于匹配的实例：
+# 统计所有以“48”字符开头的行有多少
+$ grep -c "48" test.txt
+
+# 不区分大小写查找“May”所有的行）
+$ grep -i "May" test.txt
+
+# 显示行号；显示匹配字符“48”的行及行号，相同于 nl test.txt |grep 48）
+$ grep -n "48" test.txt
+
+# 显示输出没有字符“48”所有的行）
+$ grep -v "48" test.txt
+
+# 显示输出字符“471”所在的行）
+$ grep "471" test.txt
+
+# 显示输出以字符“48”开头，并在字符“48”后是一个tab键所在的行
+$ grep "48;" test.txt
+
+# 显示输出以字符“48”开头，第三个字符是“3”或是“4”的所有的行）
+$ grep "48[34]" test.txt
+
+# 显示输出行首不是字符“48”的行）
+$ grep "^[^48]" test.txt
+
+# 设置大小写查找：显示输出第一个字符以“M”或“m”开头，以字符“ay”结束的行）
+$ grep "[Mm]ay" test.txt
+
+# 显示输出第一个字符是“K”，第二、三、四是任意字符，第五个字符是“D”所在的行）
+$ grep "K…D" test.txt
+
+# 显示输出第一个字符的范围是“A-D”，第二个字符是“9”，第三个字符的是“D”的所有的行
+$ grep "[A-Z][9]D" test.txt
+
+# 显示第一个字符是3或5，第二三个字符是任意，以1998结尾的所有行
+$ grep "[35]..1998" test.txt
+
+# 模式出现几率查找：显示输出字符“4”至少重复出现两次的所有行
+$ grep "4\{2,\}" test.txt
+
+# 模式出现几率查找：显示输出字符“9”至少重复出现三次的所有行
+$ grep "9\{3,\}" test.txt
+
+# 模式出现几率查找：显示输出字符“9”重复出现的次数在一定范围内，重复出现2次或3次所有行
+$ grep "9\{2,3\}" test.txt
+
+# 显示输出空行的行号
+$ grep -n "^$" test.txt
+
+# 如果要查询目录列表中的目录 同：ls -d *
+$ ls -l |grep "^d"
+
+# 在一个目录中查询不包含目录的所有文件
+$ ls -l |grep "^d[d]"
+
+# 查询其他用户和用户组成员有可执行权限的目录集合
+$ ls -l |grpe "^d…..x..x"
 
 # 读出logcat.log文件的内容，通过管道转发给grep作为输入内容,过滤包含"Displayed"的行，将输出内容再作为输入能过管道转发给下一个grep
 $ cat logcat.log | grep -n 'Displayed' | grep ms
@@ -269,6 +399,16 @@ $ grep blog /Users/ben
 
 # 显示/Users/ben目录下的文件(包含子目录)包含blog的行
 $ grep -r blog /Users/ben
+
+# 结合sort和uniq一起使用可以排序并去重
+# 这里使用了正则，"."是匹配一个非换行符的字符
+$ cat adlog_kafka_20161204.log | grep -o 'logs.....' | sort | uniq
+
+# 统计各行在文件中出现的次数
+$ sort file.txt | uniq -c
+
+# 在文件中找出重复的行
+$ sort file.txt | uniq -d
 ```
 
 ### sed结合grep命令批量替换文件内容
@@ -334,6 +474,16 @@ du -m ~/Downloads | awk '$1 > 2000' | sort -nr | more
 17671   /Users/yunyu/Downloads/yunyu
 7966    /Users/yunyu/Downloads/install
 3048    /Users/yunyu/Downloads/develop
+```
+
+### split拆分合并文件
+
+```
+# 将大文件bigfile.tar按照每100m拆分成多个小文件
+# 拆分后的小文件命名类似：split-bigfile.aa, split-bigfile.ab, split-bigfile.ac等等
+split -b 100m bigfile.tar split-bigfile.
+# 将多个小文件split-bigfile.*合并成一个大文件bigfile.tar
+cat split-bigfile.* > bigfile.tar
 ```
 
 ### chown、useradd、groupadd、userdel、usermod、passwd、groupdel（新建用户、用户组，给用户分配权限） 
@@ -644,3 +794,4 @@ $ mysql -u root -p user < /home/ben/user20160101.sql
 - http://blog.csdn.net/column/details/linuxcommad.html?&page=2
 - http://jingyan.baidu.com/article/d45ad148e801c769552b800c.html
 - http://www.php-note.com/article/detail/831
+- http://www.cnblogs.com/xiaouisme/archive/2012/11/09/2762543.html
