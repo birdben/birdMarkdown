@@ -38,8 +38,17 @@ $ git remote add origin https://github.com/birdben/birdGit.git
 # -u参数是告诉git记住参数，下次就可以使用git push命令来提交到远程Git repository
 $ git push -u origin master
 
-# 从远端的Git repository pull最新的代码到本地的Git repository
+$ 将本地的commit提交push到master分支
+$ git push origin master
+
+$ 将本地的commit提交push到develop分支
+$ git push origin develop
+
+# 从远端的master分支pull最新的代码到本地的Git repository
 $ git pull origin master
+
+# 从远端的develop分支pull最新的代码到本地的Git repository
+$ git pull origin develop
 ```
 
 ### Git 比较相关命令
@@ -260,6 +269,31 @@ $ git branch -a
 
 * master
   remotes/origin/master
+  
+# 关联远程分支和本地分支
+
+使用场景: 本地新建一个分支后，必须要做远程分支关联。如果没有关联，git会在下面的操作中提示你显示的添加关联。关联目的是如果在本地分支下操作：git pull, git push，不需要指定在命令行指定远程的分支。
+
+# 新建分支my_branch
+$ git branch my_branch
+# 将新分支my_branch提交到远程
+$ git push origin my_branch
+$ git pull
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> my_branch
+
+# 将本地的my_branch分支与远程的my_branch关联
+$ git branch --set-upstream my_branch origin/my_branch
+
+# 该语法等价与在第一次提交分支时，使用git push -u origin my_branch
+# 通常我们在新建分支的时候，一定要显式建立这种联系。
 ```
 
 
@@ -319,6 +353,28 @@ $ git branch -d test2
 * test3
   remotes/origin/master
   remotes/origin/test3
+
+# 也可以merge远程分支test3到本地分支test2(当前是test2分支的目录)
+$ git merge origin/test3
+```
+
+
+
+### 实际应用合并分支举例
+
+```
+# 创建分支后，开发完成，切换到需要提交的分支比如develop
+$ git checkout develop
+$ git pull origin develop
+
+# 将本地创建的分支进行合并
+$ git merge localbranch
+
+# 提交到develop分支
+$ git push origin develop
+
+# 将本地分支提交到远程仓库作为一个新的版本
+$ git push origin localbranch
 ```
 
 适合git初学者使用：
@@ -332,3 +388,4 @@ $ git branch -d test2
 - http://www.jianshu.com/p/08ad7e427fec
 - http://blog.csdn.net/wirelessqa/article/category/1522507
 - http://selfcontroller.iteye.com/blog/1786644
+- http://www.cnblogs.com/highriver/archive/2011/12/09/2282683.html
