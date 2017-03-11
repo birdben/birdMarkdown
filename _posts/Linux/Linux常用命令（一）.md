@@ -243,7 +243,7 @@ $ find . -iname "Hessian.properties"
 $ find . -maxdepth 1 -type f -name "*" ! -name "*.gz"  ! -name "*.zip" ! -name "*.pid" ! -type l -mtime +1
 ```
 
-### find结合xargs命令批量删除文件
+### find结合xargs命令批量操作文件
 
 ```
 # 删除当前目录下除了test.txt的其他所有文件
@@ -251,6 +251,9 @@ $ find . -type f -not -name test.txt | xargs rm -v
 
 # 默认情况下，find命令每输出一个文件名，后面都会接着输出一个换行符 ('n')，因此我们看到的find的输出都是一行一行的。xargs默认是以空白字符（空格，TAB，换行符）来分割记录的，如果文件名中带有空格这样会被xargs分割开，删除的时候就会找不到该文件了。所以让find在打印出一个文件名之后接着输出一个NULL字符 ('') 而不是换行符，然后再告诉xargs也用NULL字符来作为记录的分隔符。这样就解决了上面的问题。也就是find的-print0和xargs的-0的作用。
 $ find . -type f -not -name test.txt -print0 | xargs -0 rm -v
+
+# 查找当前文件下log文件，并且批量替换文件内容martini为middleware
+$ find . -name '*.log' | xargs sed -i 's/martini/middleware/g'
 ```
 
 ### grep文件内容查找相关
@@ -282,7 +285,7 @@ $ grep [options]
 -G 将范本样式视为普通的表示法来使用。
 -h 在显示符合范本样式的那一列之前，不标示该列所属的文件名称。
 -H 在显示符合范本样式的那一列之前，标示该列的文件名称。
--i 胡列字符大小写的差别。
+-i 忽略字符大小写的差别。
 -l 列出文件内容符合指定的范本样式的文件名称。
 -L 列出文件内容不符合指定的范本样式的文件名称。
 -n 在显示符合范本样式的那一列之前，标示出该列的编号。
@@ -294,6 +297,7 @@ $ grep [options]
 -x 只显示全列符合的列。
 -y 此参数效果跟“-i”相同。
 -o 只输出文件中匹配到的部分。
+--exclude-dir 搜索文件内容时，排除指定的文件夹
 
 grep正则表达式元字符集：
 
@@ -368,7 +372,7 @@ $ ls -l |grep "^d"
 $ ls -l |grep "^d[d]"
 
 # 查询其他用户和用户组成员有可执行权限的目录集合
-$ ls -l |grpe "^d…..x..x"
+$ ls -l |grep "^d…..x..x"
 
 # 读出logcat.log文件的内容，通过管道转发给grep作为输入内容,过滤包含"Displayed"的行，将输出内容再作为输入能过管道转发给下一个grep
 $ cat logcat.log | grep -n 'Displayed' | grep ms

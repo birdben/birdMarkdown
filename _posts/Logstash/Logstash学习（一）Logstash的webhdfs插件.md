@@ -209,3 +209,4 @@ output {
 - http://heqin.blog.51cto.com/8931355/1796776
 - http://www.cnblogs.com/ZisZ/p/3253570.html
 - http://hadoop.apache.org/docs/r2.7.3/hadoop-project-dist/hadoop-hdfs/HDFSCommands.html#datanode
+- http://jxy.me/2015/06/09/hdfs-data-visibility/

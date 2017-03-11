@@ -13,6 +13,12 @@ categories: [Git]
 2. 暂缓区（stage index） 
 3. 历史记录区（history）   
 
+![我的Git区域理解](http://img.blog.csdn.net/20170226112829569?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYmlyZGJlbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+![Git reset图](http://img.blog.csdn.net/20170306113102274?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYmlyZGJlbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+![Git diff图](http://img.blog.csdn.net/20170304175910462?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYmlyZGJlbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
 ![Git区域的理解](http://img.blog.csdn.net/20160820133106483?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
 
 ![Git区域的理解1](http://img.blog.csdn.net/20160820133129026?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
@@ -389,3 +395,6 @@ $ git push origin localbranch
 - http://blog.csdn.net/wirelessqa/article/category/1522507
 - http://selfcontroller.iteye.com/blog/1786644
 - http://www.cnblogs.com/highriver/archive/2011/12/09/2282683.html
+- http://blog.jobbole.com/22647/
+- http://www.tuicool.com/articles/NzeQZz3
+- http://gitbook.liuhui998.com/4_2.html
