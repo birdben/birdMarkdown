@@ -1,7 +1,7 @@
 ---
-title: "Shell脚本学习（四）EOF的用法"
+title: "AWK学习（一）"
 date: 2016-08-15 00:15:18
-tags: [Shell]
+tags: [AWK]
 categories: [Shell]
 ---
 

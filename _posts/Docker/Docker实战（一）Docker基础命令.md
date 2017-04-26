@@ -30,23 +30,26 @@ $ docker pull ubuntu:14.04
 $ docker history birdben/ubuntu:v1
 
 # 列出一个容器里面被改变的文件或者目
-$ docker diff birdben/ubuntu:v1
+$ docker diff $CONTAINER_ID 
 
 # 从一个容器中取日志
-$ docker logs birdben/ubuntu:v1
+$ docker logs $CONTAINER_ID 
+
+# 从一个容器中取出最后的100条日志
+$ docker logs --tail=100 $CONTAINER_ID
 
 # 显示一个运行的容器里面的进程信息
-$ docker top birdben/ubuntu:v1
+$ docker top $CONTAINER_ID 
 
 # 从容器里面拷贝文件/目录到本地一个路径
-$ docker cp ID:/container_path to_path
+$ docker cp $CONTAINER_ID:/container_path to_path
 
 # Docker attach可以attach到一个已经运行的容器的stdin，然后进行命令执行的动作。但是需要注意的是，如果从这个stdin中exit，会导致容器的停止。
-$ docker attach ID
+$ docker attach $CONTAINER_ID
 
 # Docker exec也可以到一个已经运行的容器的stdin，然后进行命令执行的动作。而且也不会像attach方式因为退出，导致整个容器退出。
 # docker exec -it birdben/ubuntu:v1 /bin/sh
-$ docker exec -参数 ID /bin/sh
+$ docker exec -参数 $CONTAINER_ID /bin/sh
 
 # 列出当前所有正在运行的容器
 $ docker ps
@@ -59,6 +62,9 @@ $ docker ps -l
 
 # 查看容器的相关信息
 $ docker inspect $CONTAINER_ID
+
+# 查看容器的性能信息
+$ docker stats $CONTAINER_ID
 
 # 显示容器IP地址和端口号，如果输出是空的说明没有配置IP地址（不同的Docker容器可以通过此IP地址互相访问）
 $ docker inspect --format='{{.NetworkSettings.IPAddress}}' $CONTAINER_ID

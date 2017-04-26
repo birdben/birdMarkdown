@@ -167,6 +167,15 @@ $ sudo docker run -i -t --entrypoint /bin/bash example/redis -c ls -l
 $ sudo docker run -i -t --entrypoint /usr/bin/redis-cli example/redis --help
 ```
 
+```
+# 常见问题："docker-entrypoint.sh": executable file not found in $PATH.
+
+# 多数原因是因为docker-entrypoint.sh脚本文件没有执行权限，需要在Dockerfile修改脚本文件的执行权限，或者在宿主机修改挂载的docker-entrypoint.sh脚本文件的执行权限
+
+RUN chmod +x docker-entrypoint.sh
+```
+
+
 #### EXPOSE
 
 ```
@@ -301,3 +310,4 @@ root@358618f9aa4d:/usr/local#
 
 - http://dockone.io/article/152
 - https://docs.docker.com/engine/reference/commandline/run/
+- https://github.com/docker/docker/issues/27182

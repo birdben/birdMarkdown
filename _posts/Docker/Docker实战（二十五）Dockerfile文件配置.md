@@ -79,6 +79,8 @@ $ docker run -it birdDocker "this is a run test"
 
 # 这里birdDocker镜像对应的容器表现出来的功能就像一个echo程序一样。这里docker run的参数"this is a run test"会添加到ENTRYPOINT后面，就成了这样/bin/echo "this is a run test"。
 
+# 也就是说CMD的参数只是docker run没有传参的时，使用的默认参数。
+
 # 同理，下面的docker-entrypoint.sh脚本文件也可以通过上面的docker run的方式来接收参数。
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
@@ -89,7 +91,7 @@ CMD ["zkServer.sh", "start-foreground"]
 
 RUN是在build成镜像时就运行的，先于CMD和ENTRYPOINT的。Build完成了，RUN也运行完成后，再运行CMD或者ENTRYPOINT。CMD会在每次启动容器的时候运行，而RUN只在创建镜像时执行一次，固化在image中。
 
-ENTRYPOINT和CMD的不同点在于执行docker run时参数传递方式，CMD指定的命令可以被docker run传递的命令覆盖，例如，如果用CMD指定：
+ENTRYPOINT和CMD的不同点在于执行docker run时参数传递方式，CMD指定的命令可以被docker run传递的命令覆盖，如果docker run没有指定参数，则会使用CMD的默认参数执行，例如，如果用CMD指定：
 
 ```
 ...

@@ -58,9 +58,13 @@ ctrl + r: bck-i-search/reverse-i-search, 输入关键字搜索历史命令
 - Paw : http://www.pc6.com/mac/182304.html
 - iTerm + zsh : http://www.iterm2.com
 - Charles : http://www.pc6.com/mac/137987.html
+- Wireshark : https://www.wireshark.org/download.html
+- iHex : AppStore
 - Parallels Desktop 9 : http://www.pc6.com/mac/111671.html
 - Parallels Desktop 11 : http://www.pc6.com/mac/119748.html
 - JD-GUI : http://www.pc6.com/mac/152875.html
+- PyCharm : https://www.jetbrains.com/pycharm/
+- Gogland : https://www.jetbrains.com/go/
 - Idea : https://www.jetbrains.com/idea/
 - Eclipse : https://www.eclipse.org/downloads/
 - Navicat : http://www.pc6.com/mac/111878.html
