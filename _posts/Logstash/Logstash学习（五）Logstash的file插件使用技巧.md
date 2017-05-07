@@ -1,5 +1,5 @@
 ---
-title: "Logstash学习（一）Logstash的file插件使用技巧"
+title: "Logstash学习（五）Logstash的file插件使用技巧"
 date: 2016-12-21 16:19:46
 tags: [Logstash]
 categories: [Log]

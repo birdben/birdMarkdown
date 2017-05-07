@@ -1,5 +1,5 @@
 ---
-title: "Logstash学习（一）Logstash整合Kafka"
+title: "Logstash学习（二）Logstash整合Kafka"
 date: 2016-11-21 19:52:20
 tags: [Logstash, Kafka]
 categories: [Log]
@@ -26,11 +26,29 @@ categories: [Log]
 ### logstash-shipper-kafka.conf配置
 
 ```
-input {    file {        path => ["/home/yunyu/Downloads/track.log"]        type => "api"        codec => "json"        start_position => "beginning"
+input {
+    file {
+        path => ["/home/yunyu/Downloads/track.log"]
+        type => "api"
+        codec => "json"
+        start_position => "beginning"
         # 设置是否忽略太旧的日志的
-        # 如果没设置该属性可能会导致读取不到文件内容，因为我们的日志大部分是好几个月前的，所以这里设置为不忽略        ignore_older => 0    }}output {    stdout {        codec => rubydebug    }    kafka {
-        # 指定Kafka集群地址        bootstrap_servers => "hadoop1:9092,hadoop2:9092,hadoop3:9092"
-        # 指定Kafka的Topic        topic_id => "logstash_test"    }}
+        # 如果没设置该属性可能会导致读取不到文件内容，因为我们的日志大部分是好几个月前的，所以这里设置为不忽略
+        ignore_older => 0
+    }
+}
+
+output {
+    stdout {
+        codec => rubydebug
+    }
+    kafka {
+        # 指定Kafka集群地址
+        bootstrap_servers => "hadoop1:9092,hadoop2:9092,hadoop3:9092"
+        # 指定Kafka的Topic
+        topic_id => "logstash_test"
+    }
+}
 ```
 
 官网给出的注释
@@ -42,7 +60,47 @@ The default behavior of the file input plugin is to ignore files whose last modi
 ### logstash-indexer-kafka.conf配置
 
 ```
-input {    kafka {        # 指定Zookeeper集群地址        zk_connect => "hadoop1:2181,hadoop2:2181,hadoop3:2181"        # 指定当前消费者的group_id        group_id => "logstash"        # 指定消费的Topic        topic_id => "logstash_test"        # 指定消费的内容类型（默认是json）        codec => "json"        # 设置Consumer消费者从Kafka最开始的消息开始消费，必须结合"auto_offset_reset => smallest"一起使用        reset_beginning => true        # 设置如果Consumer消费者还没有创建offset或者offset非法，从最开始的消息开始消费还是从最新的消息开始消费        auto_offset_reset => "smallest"    }}filter {    # 将logs数组对象进行拆分    split {        field => "logs"    }    date {        match => ["timestamp", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]        target => "@timestamp"    }}output {    stdout {        codec => rubydebug    }    elasticsearch {        codec => "json"        hosts => ["hadoop1:9200", "hadoop2:9200", "hadoop3:9200"]        index => "api_logs_index"        workers => 1        flush_size => 20000        idle_flush_time => 10    }}
+input {
+    kafka {
+        # 指定Zookeeper集群地址
+        zk_connect => "hadoop1:2181,hadoop2:2181,hadoop3:2181"
+        # 指定当前消费者的group_id
+        group_id => "logstash"
+        # 指定消费的Topic
+        topic_id => "logstash_test"
+        # 指定消费的内容类型（默认是json）
+        codec => "json"
+        # 设置Consumer消费者从Kafka最开始的消息开始消费，必须结合"auto_offset_reset => smallest"一起使用
+        reset_beginning => true
+        # 设置如果Consumer消费者还没有创建offset或者offset非法，从最开始的消息开始消费还是从最新的消息开始消费
+        auto_offset_reset => "smallest"
+    }
+}
+
+filter {
+    # 将logs数组对象进行拆分
+    split {
+        field => "logs"
+    }
+    date {
+        match => ["timestamp", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]
+        target => "@timestamp"
+    }
+}
+
+output {
+    stdout {
+        codec => rubydebug
+    }
+    elasticsearch {
+        codec => "json"
+        hosts => ["hadoop1:9200", "hadoop2:9200", "hadoop3:9200"]
+        index => "api_logs_index"
+        workers => 1
+        flush_size => 20000
+        idle_flush_time => 10
+    }
+}
 ```
 
 官网给出的注释

@@ -1,5 +1,5 @@
 ---
-title: "Logstash学习（一）Logstash的webhdfs插件"
+title: "Logstash学习（七）Logstash的webhdfs插件"
 date: 2017-02-07 17:31:30
 tags: [Logstash]
 categories: [Log]
@@ -42,7 +42,9 @@ logstash-output-webhdfs插件地址：
 ```
 $ cd $LS_HOME
 $ ./bin/logstash-plugin install logstash-output-webhdfs
-Validating logstash-output-webhdfsInstalling logstash-output-webhdfsInstallation successful
+Validating logstash-output-webhdfs
+Installing logstash-output-webhdfs
+Installation successful
 ```
 
 #### Logstash配置文件
@@ -84,7 +86,9 @@ output {
 
 ```
 # hadoop启动步骤略过，直接查看HDFS文件目录
-$ hdfs dfs -ls /logstash/2017/02/08/Found 1 items-rwxr-xr-x   2 yunyu supergroup        282 2017-02-07 19:53 /logstash/2017/02/08/go-03.log
+$ hdfs dfs -ls /logstash/2017/02/08/
+Found 1 items
+-rwxr-xr-x   2 yunyu supergroup        282 2017-02-07 19:53 /logstash/2017/02/08/go-03.log
 ```
 
 可以导出或者cat输出HDFS中的日志文件查看内容，就先写到这里了。

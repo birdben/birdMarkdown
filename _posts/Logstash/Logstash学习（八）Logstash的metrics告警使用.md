@@ -1,5 +1,5 @@
 ---
-title: "Logstash学习（一）Logstash的metrics告警使用"
+title: "Logstash学习（八）Logstash的metrics告警使用"
 date: 2017-02-15 17:53:16
 tags: [Logstash]
 categories: [Log]

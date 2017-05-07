@@ -1,5 +1,5 @@
 ---
-title: "Logstash学习（一）Logstash的Grok表达式"
+title: "Logstash学习（三）Logstash的Grok表达式"
 date: 2016-11-23 12:52:53
 tags: [Logstash]
 categories: [Log]
@@ -24,8 +24,40 @@ categories: [Log]
 我开始的想法是从track.log日志文件中读取日志信息，因为track.log日志是标准的JSON格式的，所以直接将codec设置成json，因为logs是一个内嵌的数组，然后在filter根据logs做split，会把logs的数组拆分出多条日志信息，然后在匹配指定格式的timestamp并生成新的字段@timestamp。
 
 ```
-input {    file {        path => ["/home/yunyu/Downloads/track.log"]        type => "api"
-        codec => "json"        start_position => "beginning"        ignore_older => 0    }}filter {    split {        field => "logs"    }    date {        match => ["timestamp", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]        target => "@timestamp"    }}output {    stdout {        codec => rubydebug    }    elasticsearch {        codec => "json"        hosts => ["hadoop1:9200", "hadoop2:9200", "hadoop3:9200"]        index => "api_logs_index"        document_type => "%{type}"        workers => 1        flush_size => 20000        idle_flush_time => 10    }}
+input {
+    file {
+        path => ["/home/yunyu/Downloads/track.log"]
+        type => "api"
+        codec => "json"
+        start_position => "beginning"
+        ignore_older => 0
+    }
+}
+
+filter {
+    split {
+        field => "logs"
+    }
+    date {
+        match => ["timestamp", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]
+        target => "@timestamp"
+    }
+}
+
+output {
+    stdout {
+        codec => rubydebug
+    }
+    elasticsearch {
+        codec => "json"
+        hosts => ["hadoop1:9200", "hadoop2:9200", "hadoop3:9200"]
+        index => "api_logs_index"
+        document_type => "%{type}"
+        workers => 1
+        flush_size => 20000
+        idle_flush_time => 10
+    }
+}
 ```
 
 上述做法的确能够将track.log日志解析成功并且写入到ES中，但是没有办法获取到原日志信息，对我们来说是无法满足要求的。
@@ -132,8 +164,19 @@ input {
     }
 }
 
-filter {    grok {        match => {            "message" => "%{MATCH_ALL:@message}"        }    }
-    split {        field => "logs"    }    date {        match => ["timestamp", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]        target => "@timestamp"    }
+filter {
+    grok {
+        match => {
+            "message" => "%{MATCH_ALL:@message}"
+        }
+    }
+    split {
+        field => "logs"
+    }
+    date {
+        match => ["timestamp", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]
+        target => "@timestamp"
+    }
 }
 ```
 
@@ -142,7 +185,51 @@ filter {    grok {        match => {            "message" => "%{MATCH_ALL:@me
 所以这里我们为了能够让match的"message"获取到原日志信息，而不是我们解析好的json日志中的message属性，我们把input的codec => "json"改成codec => "plain"，这样就会在input就将原日志解析成json对象了，而是我们在filter自己来处理。具体配置文件如下：
 
 ```
-input {    file {        path => ["/home/yunyu/Downloads/track.log"]        type => "api"        start_position => "beginning"        ignore_older => 0    }}filter {    grok {        # MATCH_ALL为了匹配所有的字符串，然后将值复制给新字段@message        match => {            "message" => "%{MATCH_ALL:@message}"        }    }    # json的作用可以将日志字符串中是json字符串的部分解析转换成json对象    # 再将新字段@message转换成json对象    json {        source => "@message"    }    # split拆分转化好的json对象中的logs数组    split {        field => "logs"    }    date {        match => ["timestamp", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]        target => "@timestamp"    }}output {    stdout {        codec => rubydebug    }    elasticsearch {        codec => "json"        hosts => ["hadoop1:9200", "hadoop2:9200", "hadoop3:9200"]        index => "api_logs_index"        document_type => "%{type}"        workers => 1        flush_size => 20000        idle_flush_time => 10    }}
+input {
+    file {
+        path => ["/home/yunyu/Downloads/track.log"]
+        type => "api"
+        start_position => "beginning"
+        ignore_older => 0
+    }
+}
+
+filter {
+    grok {
+        # MATCH_ALL为了匹配所有的字符串，然后将值复制给新字段@message
+        match => {
+            "message" => "%{MATCH_ALL:@message}"
+        }
+    }
+    # json的作用可以将日志字符串中是json字符串的部分解析转换成json对象
+    # 再将新字段@message转换成json对象
+    json {
+        source => "@message"
+    }
+    # split拆分转化好的json对象中的logs数组
+    split {
+        field => "logs"
+    }
+    date {
+        match => ["timestamp", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]
+        target => "@timestamp"
+    }
+}
+
+output {
+    stdout {
+        codec => rubydebug
+    }
+    elasticsearch {
+        codec => "json"
+        hosts => ["hadoop1:9200", "hadoop2:9200", "hadoop3:9200"]
+        index => "api_logs_index"
+        document_type => "%{type}"
+        workers => 1
+        flush_size => 20000
+        idle_flush_time => 10
+    }
+}
 ```
 
 ### ES中的索引数据

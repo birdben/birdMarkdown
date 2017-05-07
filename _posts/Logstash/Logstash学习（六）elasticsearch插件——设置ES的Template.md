@@ -1,5 +1,5 @@
 ---
-title: "Logstash学习（一）elasticsearch插件——设置ES的Template"
+title: "Logstash学习（六）elasticsearch插件——设置ES的Template"
 date: 2016-12-22 14:55:58
 tags: [Logstash]
 categories: [Log]

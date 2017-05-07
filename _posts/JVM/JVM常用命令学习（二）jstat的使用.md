@@ -1,6 +1,6 @@
 ---
-title: "JVM常用命令学习（一）jstat的使用"
-date: 2017-02-09 18:23:28
+title: "JVM常用命令学习（二）jstat的使用"
+date: 2017-02-09 23:18:01
 tags: [JVM]
 categories: [Java]
 ---
@@ -10,7 +10,10 @@ categories: [Java]
 注意：不同版本的JDK可能略有差异
 
 ```
-$ java -versionjava version "1.7.0_79"Java(TM) SE Runtime Environment (build 1.7.0_79-b15)Java HotSpot(TM) 64-Bit Server VM (build 24.79-b02, mixed mode)
+$ java -version
+java version "1.7.0_79"
+Java(TM) SE Runtime Environment (build 1.7.0_79-b15)
+Java HotSpot(TM) 64-Bit Server VM (build 24.79-b02, mixed mode)
 ```
 
 ### jstat命令
@@ -23,7 +26,27 @@ jstat(Java Virtual Machine Statistics Monitoring Tool)。jstat用于监控基于
 - 查看新生代中Eden区及Survior区中容量及分配情况等
 
 ```
-$ jstat -helpUsage: jstat -help|-options       jstat -<option> [-t] [-h<lines>] <vmid> [<interval> [<count>]]Definitions:  <option>      An option reported by the -options option  <vmid>        Virtual Machine Identifier. A vmid takes the following form:                     <lvmid>[@<hostname>[:<port>]]                Where <lvmid> is the local vm identifier for the target                Java virtual machine, typically a process id; <hostname> is                the name of the host running the target Java virtual machine;                and <port> is the port number for the rmiregistry on the                target host. See the jvmstat documentation for a more complete                description of the Virtual Machine Identifier.  <lines>       Number of samples between header lines.  <interval>    Sampling interval. The following forms are allowed:                    <n>["ms"|"s"]                Where <n> is an integer and the suffix specifies the units as                 milliseconds("ms") or seconds("s"). The default units are "ms".  <count>       Number of samples to take before terminating.  -J<flag>      Pass <flag> directly to the runtime system.
+$ jstat -help
+Usage: jstat -help|-options
+       jstat -<option> [-t] [-h<lines>] <vmid> [<interval> [<count>]]
+
+Definitions:
+  <option>      An option reported by the -options option
+  <vmid>        Virtual Machine Identifier. A vmid takes the following form:
+                     <lvmid>[@<hostname>[:<port>]]
+                Where <lvmid> is the local vm identifier for the target
+                Java virtual machine, typically a process id; <hostname> is
+                the name of the host running the target Java virtual machine;
+                and <port> is the port number for the rmiregistry on the
+                target host. See the jvmstat documentation for a more complete
+                description of the Virtual Machine Identifier.
+  <lines>       Number of samples between header lines.
+  <interval>    Sampling interval. The following forms are allowed:
+                    <n>["ms"|"s"]
+                Where <n> is an integer and the suffix specifies the units as 
+                milliseconds("ms") or seconds("s"). The default units are "ms".
+  <count>       Number of samples to take before terminating.
+  -J<flag>      Pass <flag> directly to the runtime system.
 ```
 
 通过help提示可以看出基本的命令格式
@@ -225,11 +248,17 @@ Method		|指定确定被编译方法的类名及方法名，类名中使名“/�
 
 
 ```
-$ jstat -gc 22549 S0C    S1C    S0U    S1U      EC       EU        OC         OU       PC     PU    YGC     YGCT    FGC    FGCT     GCT   2560.0 512.0   0.0   384.0   8704.0   4758.8   11264.0     1326.3   21504.0 8845.8      7    0.014   2      0.061    0.075
+$ jstat -gc 22549
+ S0C    S1C    S0U    S1U      EC       EU        OC         OU       PC     PU    YGC     YGCT    FGC    FGCT     GCT   
+2560.0 512.0   0.0   384.0   8704.0   4758.8   11264.0     1326.3   21504.0 8845.8      7    0.014   2      0.061    0.075
 
-$ jstat -class 22549Loaded  Bytes  Unloaded  Bytes     Time     1543  2945.3        3     4.9       0.30
+$ jstat -class 22549
+Loaded  Bytes  Unloaded  Bytes     Time   
+  1543  2945.3        3     4.9       0.30
   
-$ jstat -compiler 22549Compiled Failed Invalid   Time   FailedType FailedMethod     235      0       0     0.70          0 
+$ jstat -compiler 22549
+Compiled Failed Invalid   Time   FailedType FailedMethod
+     235      0       0     0.70          0 
 ```
 
 参考文章：

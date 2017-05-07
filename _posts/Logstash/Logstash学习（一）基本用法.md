@@ -1,4 +1,9 @@
-## Logstash学习（一）基本用法
+---
+title: "Logstash学习（一）基本用法"
+date: 2016-10-28 21:31:08
+tags: [Logstash]
+categories: [Log]
+---
 
 ### Logstash
 简单介绍一下logstash的配置文件由 input filter output 等几个基本的部分组成，顾名思义 input 就是从哪收集数据，output就是输出到哪，filter代表一个过滤规则意思是什么内容会被收集。Logstash基本上用于收集，解析和存储日志。
