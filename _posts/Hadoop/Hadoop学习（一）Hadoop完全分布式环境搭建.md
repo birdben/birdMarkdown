@@ -12,7 +12,9 @@ categories: [Hadoop]
 我这里使用的三台虚拟机，每台虚拟机有自己的独立IP
 
 ```
-192.168.1.119   hadoop1192.168.1.150   hadoop2192.168.1.149   hadoop3
+192.168.1.119   hadoop1
+192.168.1.150   hadoop2
+192.168.1.149   hadoop3
 ```
 相关环境信息
 
@@ -41,7 +43,12 @@ $ tar -zxvf hadoop-2.7.1.tar.gz
 
 ##### 配置环境变量/etc/profile
 ```
-JAVA_HOME=/usr/local/javaexport JAVA_HOMEHADOOP_HOME=/usr/local/hadoopexport HADOOP_HOMEPATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATHexport PATH
+JAVA_HOME=/usr/local/java
+export JAVA_HOME
+HADOOP_HOME=/usr/local/hadoop
+export HADOOP_HOME
+PATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+export PATH
 ```
 
 ##### 配置HADOOP_HOME/etc/hadoop/hadoop-env.sh，添加以下内容
@@ -70,10 +77,26 @@ export JAVA_HOME=/usr/local/java
 ##### 配置HADOOP_HOME/etc/hadoop/hdfs-site.xml
 ```
 <configuration>
-  <!-- 分布式文件系统数据块复制数，我们这里是Hadoop2和Hadoop3两个节点 -->  <property>    <name>dfs.replication</name>    <value>2</value>  </property>
-  <!-- DFS namenode存放name table的目录 -->  <property>    <name>dfs.namenode.name.dir</name>    <value>file:/data/hdfs/name</value>  </property>
-  <!-- DFS datanode存放数据block的目录 -->  <property>    <name>dfs.datanode.data.dir</name>    <value>file:/data/hdfs/data</value>  </property>
-  <!-- SecondaryNameNode的端口号，默认端口号是50090 -->  <property>    <name>dfs.namenode.secondary.http-address</name>    <value>hadoop1:50090</value>  </property>
+  <!-- 分布式文件系统数据块复制数，我们这里是Hadoop2和Hadoop3两个节点 -->
+  <property>
+    <name>dfs.replication</name>
+    <value>2</value>
+  </property>
+  <!-- DFS namenode存放name table的目录 -->
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>file:/data/hdfs/name</value>
+  </property>
+  <!-- DFS datanode存放数据block的目录 -->
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>file:/data/hdfs/data</value>
+  </property>
+  <!-- SecondaryNameNode的端口号，默认端口号是50090 -->
+  <property>
+    <name>dfs.namenode.secondary.http-address</name>
+    <value>hadoop1:50090</value>
+  </property>
 </configuration>
 ```
 
@@ -86,8 +109,15 @@ export JAVA_HOME=/usr/local/java
     <value>yarn</value>
   </property>
   <!-- MapReduce JobHistory Server的IPC通信地址，默认端口号是10020 -->
-  <property>     <name>mapreduce.jobhistory.address</name>     <value>hadoop1:10020</value>  </property>
-  <!-- MapReduce JobHistory Server的Web服务器访问地址，默认端口号是19888 -->  <property>     <name>mapreduce.jobhistory.webapp.address</name>     <value>hadoop1:19888</value>  </property>
+  <property>
+     <name>mapreduce.jobhistory.address</name>
+     <value>hadoop1:10020</value>
+  </property>
+  <!-- MapReduce JobHistory Server的Web服务器访问地址，默认端口号是19888 -->
+  <property>
+     <name>mapreduce.jobhistory.webapp.address</name>
+     <value>hadoop1:19888</value>
+  </property>
   <!-- MapReduce已完成作业信息 -->
   <property>
     <name>mapreduce.jobhistory.done-dir</name>
@@ -109,13 +139,35 @@ export JAVA_HOME=/usr/local/java
     <name>yarn.nodemanager.aux-services</name>
     <value>mapreduce_shuffle</value>
   </property>
-  <property>    <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>    <value>org.apache.hadoop.mapred.ShuffleHandler</value>  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
   <!-- NodeManager与ResourceManager通信的接口地址，默认端口是8032 -->
-  <property>    <name>yarn.resourcemanager.address</name>    <value>hadoop1:8032</value>  </property>
-  <!-- NodeManger需要知道ResourceManager主机的scheduler调度服务接口地址，默认端口是8030 -->  <property>    <name>yarn.resourcemanager.scheduler.address</name>    <value>hadoop1:8030</value>  </property>
-  <!-- NodeManager需要向ResourceManager报告任务运行状态供Resouce跟踪，因此NodeManager节点主机需要知道ResourceManager主机的tracker接口地址，默认端口是8031 -->  <property>    <name>yarn.resourcemanager.resource-tracker.address</name>    <value>hadoop1:8031</value>  </property>
-  <!-- resourcemanager.admin，默认端口是8033 -->  <property>    <name>yarn.resourcemanager.admin.address</name>    <value>hadoop1:8033</value>  </property>
-  <!-- 各个task的资源调度及运行状况通过通过该web界面访问，默认端口是8088 -->  <property>    <name>yarn.resourcemanager.webapp.address</name>    <value>hadoop1:8088</value>  </property>
+  <property>
+    <name>yarn.resourcemanager.address</name>
+    <value>hadoop1:8032</value>
+  </property>
+  <!-- NodeManger需要知道ResourceManager主机的scheduler调度服务接口地址，默认端口是8030 -->
+  <property>
+    <name>yarn.resourcemanager.scheduler.address</name>
+    <value>hadoop1:8030</value>
+  </property>
+  <!-- NodeManager需要向ResourceManager报告任务运行状态供Resouce跟踪，因此NodeManager节点主机需要知道ResourceManager主机的tracker接口地址，默认端口是8031 -->
+  <property>
+    <name>yarn.resourcemanager.resource-tracker.address</name>
+    <value>hadoop1:8031</value>
+  </property>
+  <!-- resourcemanager.admin，默认端口是8033 -->
+  <property>
+    <name>yarn.resourcemanager.admin.address</name>
+    <value>hadoop1:8033</value>
+  </property>
+  <!-- 各个task的资源调度及运行状况通过通过该web界面访问，默认端口是8088 -->
+  <property>
+    <name>yarn.resourcemanager.webapp.address</name>
+    <value>hadoop1:8088</value>
+  </property>
 </configuration>
 ```
 
@@ -141,7 +193,9 @@ hadoop1
 这里Hadoop1是namenode，Hadoop2和Hadoop3是datanode
 
 ```
-192.168.1.119   hadoop1192.168.1.150   hadoop2192.168.1.149   hadoop3
+192.168.1.119   hadoop1
+192.168.1.150   hadoop2
+192.168.1.149   hadoop3
 ```
 
 ##### 配置SSH免密码登录
@@ -184,37 +238,74 @@ $ scp -r /data/hadoop-2.7.1 root@Hadoop3:/data/
 $ ./bin/hdfs namenode -format
 
 # 初始化好namenode后，hadoop会自动建好对应hdfs-site.xml的namenode配置的文件路径
-$ ll /data/hdfs/name/current/total 24drwxrwxr-x 2 yunyu yunyu 4096 Sep 10 18:07 ./drwxrwxr-x 3 yunyu yunyu 4096 Sep 10 18:07 ../-rw-rw-r-- 1 yunyu yunyu  352 Sep 10 18:07 fsimage_0000000000000000000-rw-rw-r-- 1 yunyu yunyu   62 Sep 10 18:07 fsimage_0000000000000000000.md5-rw-rw-r-- 1 yunyu yunyu    2 Sep 10 18:07 seen_txid-rw-rw-r-- 1 yunyu yunyu  202 Sep 10 18:07 VERSION
+$ ll /data/hdfs/name/current/
+total 24
+drwxrwxr-x 2 yunyu yunyu 4096 Sep 10 18:07 ./
+drwxrwxr-x 3 yunyu yunyu 4096 Sep 10 18:07 ../
+-rw-rw-r-- 1 yunyu yunyu  352 Sep 10 18:07 fsimage_0000000000000000000
+-rw-rw-r-- 1 yunyu yunyu   62 Sep 10 18:07 fsimage_0000000000000000000.md5
+-rw-rw-r-- 1 yunyu yunyu    2 Sep 10 18:07 seen_txid
+-rw-rw-r-- 1 yunyu yunyu  202 Sep 10 18:07 VERSION
 
 # 启动hdfs服务
 $ ./sbin/start-dfs.sh
-Starting namenodes on [hadoop1]hadoop1: starting namenode, logging to /data/hadoop-2.7.1/logs/hadoop-yunyu-namenode-ubuntu.outhadoop2: starting datanode, logging to /data/hadoop-2.7.1/logs/hadoop-yunyu-datanode-ubuntu.outhadoop3: starting datanode, logging to /data/hadoop-2.7.1/logs/hadoop-yunyu-datanode-ubuntu.outStarting secondary namenodes [hadoop1]hadoop1: starting secondarynamenode, logging to /data/hadoop-2.7.1/logs/hadoop-yunyu-secondarynamenode-ubuntu.out
+Starting namenodes on [hadoop1]
+hadoop1: starting namenode, logging to /data/hadoop-2.7.1/logs/hadoop-yunyu-namenode-ubuntu.out
+hadoop2: starting datanode, logging to /data/hadoop-2.7.1/logs/hadoop-yunyu-datanode-ubuntu.out
+hadoop3: starting datanode, logging to /data/hadoop-2.7.1/logs/hadoop-yunyu-datanode-ubuntu.out
+Starting secondary namenodes [hadoop1]
+hadoop1: starting secondarynamenode, logging to /data/hadoop-2.7.1/logs/hadoop-yunyu-secondarynamenode-ubuntu.out
 
 # 使用jps检查启动的服务，可以看到NameNode和SecondaryNameNode已经启动
-$ jps20379 SecondaryNameNode20570 Jps20106 NameNode
+$ jps
+20379 SecondaryNameNode
+20570 Jps
+20106 NameNode
 
 # 这时候在Hadoop2和Hadoop3节点上使用jps查看，DataNode已经启动
-$ jps16392 Jps16024 DataNode
+$ jps
+16392 Jps
+16024 DataNode
 
 # 在Hadoop2和Hadoop3节点上，也会自动建好对应hdfs-site.xml的datanode配置的文件路径
-$ ll /data/hdfs/data/current/total 16drwxrwxr-x 3 yunyu yunyu 4096 Sep 10 18:10 ./drwx------ 3 yunyu yunyu 4096 Sep 10 18:10 ../drwx------ 4 yunyu yunyu 4096 Sep 10 18:10 BP-1965589257-127.0.1.1-1473502067891/-rw-rw-r-- 1 yunyu yunyu  229 Sep 10 18:10 VERSION
+$ ll /data/hdfs/data/current/
+total 16
+drwxrwxr-x 3 yunyu yunyu 4096 Sep 10 18:10 ./
+drwx------ 3 yunyu yunyu 4096 Sep 10 18:10 ../
+drwx------ 4 yunyu yunyu 4096 Sep 10 18:10 BP-1965589257-127.0.1.1-1473502067891/
+-rw-rw-r-- 1 yunyu yunyu  229 Sep 10 18:10 VERSION
 
 # 启动yarn服务
 $ ./sbin/start-yarn.sh
-starting yarn daemonsstarting resourcemanager, logging to /data/hadoop-2.7.1/logs/yarn-yunyu-resourcemanager-ubuntu.outhadoop3: starting nodemanager, logging to /data/hadoop-2.7.1/logs/yarn-yunyu-nodemanager-ubuntu.outhadoop2: starting nodemanager, logging to /data/hadoop-2.7.1/logs/yarn-yunyu-nodemanager-ubuntu.out
+starting yarn daemons
+starting resourcemanager, logging to /data/hadoop-2.7.1/logs/yarn-yunyu-resourcemanager-ubuntu.out
+hadoop3: starting nodemanager, logging to /data/hadoop-2.7.1/logs/yarn-yunyu-nodemanager-ubuntu.out
+hadoop2: starting nodemanager, logging to /data/hadoop-2.7.1/logs/yarn-yunyu-nodemanager-ubuntu.out
 
 # 使用jps检查启动的服务，可以看到ResourceManager已经启动
-$ jps21653 Jps20379 SecondaryNameNode20106 NameNode21310 ResourceManager
+$ jps
+21653 Jps
+20379 SecondaryNameNode
+20106 NameNode
+21310 ResourceManager
 
 # 这时候在Hadoop2和Hadoop3节点上使用jps查看，NodeManager已经启动
-$ jps16946 NodeManager17235 Jps16024 DataNode
+$ jps
+16946 NodeManager
+17235 Jps
+16024 DataNode
 
 # 启动jobhistory服务，默认jobhistory在使用start-all.sh是不启动的，所以即使使用start-all.sh也要手动启动jobhistory服务
 $ ./sbin/mr-jobhistory-daemon.sh start historyserver
 starting historyserver, logging to /data/hadoop-2.7.1/logs/mapred-yunyu-historyserver-ubuntu.out
 
 # 使用jps检查启动的服务，可以看到JobHistoryServer已经启动
-$ jps21937 Jps20379 SecondaryNameNode20106 NameNode21863 JobHistoryServer21310 ResourceManager
+$ jps
+21937 Jps
+20379 SecondaryNameNode
+20106 NameNode
+21863 JobHistoryServer
+21310 ResourceManager
 ```
 
 注意：使用start-all.sh启动已经不再被推荐使用，所以这里使用的是Hadoop推荐的分开启动，分别启动start-dfs.sh和start-yarn.sh，所以看一些比较就的Hadoop版本安装的文章可能会用start-all.sh启动
@@ -246,16 +337,24 @@ $ ./sbin/mr-jobhistory-daemon.sh stop historyserver
 ##### 验证HDFS文件系统
 ```
 # 查看根目录下的文件
-$ hdfs dfs -ls /Found 1 itemsdrwxrwx---   - yunyu supergroup          0 2016-09-10 03:15 /data
+$ hdfs dfs -ls /
+Found 1 items
+drwxrwx---   - yunyu supergroup          0 2016-09-10 03:15 /data
 
 # 创建temp目录
 $ hdfs dfs -mkdir /temp
 
 # 再次查看根目录下的文件，可以看到temp目录
-$ hdfs dfs -ls /Found 2 itemsdrwxrwx---   - yunyu supergroup          0 2016-09-10 03:15 /datadrwxr-xr-x   - yunyu supergroup          0 2016-09-10 03:45 /temp
+$ hdfs dfs -ls /
+Found 2 items
+drwxrwx---   - yunyu supergroup          0 2016-09-10 03:15 /data
+drwxr-xr-x   - yunyu supergroup          0 2016-09-10 03:45 /temp
 
 # 可以查看之前mapred-site.xml中配置的mapreduce作业执行中的目录和作业已完成的目录
-$ hdfs dfs -ls /data/history/Found 2 itemsdrwxrwx---   - yunyu supergroup          0 2016-09-10 03:15 /data/history/donedrwxrwxrwt   - yunyu supergroup          0 2016-09-10 03:15 /data/history/done_intermediate
+$ hdfs dfs -ls /data/history/
+Found 2 items
+drwxrwx---   - yunyu supergroup          0 2016-09-10 03:15 /data/history/done
+drwxrwxrwt   - yunyu supergroup          0 2016-09-10 03:15 /data/history/done_intermediate
 ```
 
 ### 需要注意的地方
@@ -265,7 +364,10 @@ $ hdfs dfs -ls /data/history/Found 2 itemsdrwxrwx---   - yunyu supergroup     
 最近好久没有用Hadoop了，突然要做日志持久化，居然本地的Hadoop集群环境起不来了，后来发现是自己启动方式错了，三个Hadoop节点只需要在NameNode执行start-dfs.sh和start-yarn.sh脚本，而我却分别在三个Hadoop节点都去做了启动操作，发现下面的提示信息才反应过来，真是太尴尬了。。
 
 ```
-$ start-dfs.shStarting namenodes on [hadoop1]yunyu@hadoop1's password: hadoop1: namenode running as process 9117. Stop it first.
+$ start-dfs.sh
+Starting namenodes on [hadoop1]
+yunyu@hadoop1's password: 
+hadoop1: namenode running as process 9117. Stop it first.
 ```
 
 ### 使用HDFS默认端口号8020配置
@@ -273,7 +375,12 @@ $ start-dfs.shStarting namenodes on [hadoop1]yunyu@hadoop1's password: hadoop
 修改core-site.xml配置文件如下（即把端口号去掉）
 
 ```
-<configuration>  <property>    <name>fs.defaultFS</name>    <value>hdfs://hadoop1</value>  </property></configuration>
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://hadoop1</value>
+  </property>
+</configuration>
 ```
 
 启动HDFS服务之后，分别在Hadoop1，2，3三台服务器上查看8020端口，发现HDFS默认使用的是8020端口
@@ -283,13 +390,23 @@ $ start-dfs.shStarting namenodes on [hadoop1]yunyu@hadoop1's password: hadoop
 $ ./sbin/start-dfs.sh
 
 # Hadoop1中查看8020端口
-$ lsof -i:8020COMMAND  PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAMEjava    5112 yunyu  197u  IPv4  26041      0t0  TCP hadoop1:8020 (LISTEN)java    5112 yunyu  207u  IPv4  27568      0t0  TCP hadoop1:8020->hadoop2:34867 (ESTABLISHED)java    5112 yunyu  208u  IPv4  26096      0t0  TCP hadoop1:8020->hadoop3:59852 (ESTABLISHED)java    5112 yunyu  209u  IPv4  29792      0t0  TCP hadoop1:8020->hadoop1:45542 (ESTABLISHED)java    5383 yunyu  196u  IPv4  28826      0t0  TCP hadoop1:45542->hadoop1:8020 (ESTABLISHED)
+$ lsof -i:8020
+COMMAND  PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+java    5112 yunyu  197u  IPv4  26041      0t0  TCP hadoop1:8020 (LISTEN)
+java    5112 yunyu  207u  IPv4  27568      0t0  TCP hadoop1:8020->hadoop2:34867 (ESTABLISHED)
+java    5112 yunyu  208u  IPv4  26096      0t0  TCP hadoop1:8020->hadoop3:59852 (ESTABLISHED)
+java    5112 yunyu  209u  IPv4  29792      0t0  TCP hadoop1:8020->hadoop1:45542 (ESTABLISHED)
+java    5383 yunyu  196u  IPv4  28826      0t0  TCP hadoop1:45542->hadoop1:8020 (ESTABLISHED)
 
 # Hadoop2中查看8020端口
-$ lsof -i:8020COMMAND  PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAMEjava    4609 yunyu  234u  IPv4  24013      0t0  TCP hadoop2:34867->hadoop1:8020 (ESTABLISHED)
+$ lsof -i:8020
+COMMAND  PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+java    4609 yunyu  234u  IPv4  24013      0t0  TCP hadoop2:34867->hadoop1:8020 (ESTABLISHED)
 
 # Hadoop3中查看8020端口
-$ lsof -i:8020COMMAND  PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAMEjava    4452 yunyu  234u  IPv4  23413      0t0  TCP hadoop3:59852->hadoop1:8020 (ESTABLISHED)
+$ lsof -i:8020
+COMMAND  PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+java    4452 yunyu  234u  IPv4  23413      0t0  TCP hadoop3:59852->hadoop1:8020 (ESTABLISHED)
 ```
 
 访问HDFS集群的方式
@@ -369,3 +486,4 @@ openssl: true /usr/lib64/libcrypto.so
 - http://jacoxu.com/?p=961
 - http://blog.csdn.net/jack85986370/article/details/51902871
 - http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/NativeLibraries.html
+- http://blog.csdn.net/liuxinghao/article/details/40121843

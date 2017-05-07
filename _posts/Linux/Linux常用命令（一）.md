@@ -207,7 +207,8 @@ $ tcpdump -i eth0 -vnn -r /Users/ben/Downloads/tcpdump.cap tcp
 $ tcpdump -i eth0 -vnn -r /Users/ben/Downloads/tcpdump.cap host 192.168.1.3
 
 # 抓包结果
-00:36:48.658266 IP (tos 0x0, ttl 64, id 15221, offset 0, flags [DF], proto TCP (6), length 40)    10.211.55.4.32903 > 61.135.169.125.443: Flags [.], cksum 0xe7a0 (correct), ack 4785, win 343, length 0
+00:36:48.658266 IP (tos 0x0, ttl 64, id 15221, offset 0, flags [DF], proto TCP (6), length 40)
+    10.211.55.4.32903 > 61.135.169.125.443: Flags [.], cksum 0xe7a0 (correct), ack 4785, win 343, length 0
 
 # 抓包结果解释
 00:36:48.658266    抓包时间
@@ -725,6 +726,71 @@ $ gpasswd -a 用户名 用户组
 $ gpasswd -d 用户名 用户组
 ```
 
+### chmod
+
+方式一：用包含字母和操作符表达式的文字设定法
+
+```
+其语法格式为：chmod [who] [opt] [mode] 文件/目录名 
+
+# who表示对象，是以下字母中的一个或组合：
+u：表示文件所有者 
+g：表示同组用户
+o：表示其它用户
+a：表示所有用户
+
+# opt则是代表操作：
++：添加某个权限
+-：取消某个权限
+=：赋予给定的权限，并取消原有的权限
+
+# mode则代表权限：
+r：可读
+w：可写
+x：可执行  表示只有当该档案是个子目录或者该档案已经被设定过为可执行
+
+# 为同组用户增加对文件test.txt的读写权限
+$ chmod g+rw test.txt
+
+# 给test.sh执行权限
+$ chmod +x test.sh
+```
+
+方式二：用数字设定法
+
+```
+其语法格式为：chmod [mode] 文件名 或者 chmod UPO 文件名
+
+UPO分别表示User、Group、及Other的权限
+
+关键是mode的取值，其实很简单，我们将rwx看成二进制数，如果有则有1表示，没有则有0表示。
+那么rwx r-x r-- 则可以表示成为：111 101 100 再将其每三位转换成为一个十进制数，就是754。
+
+可读 : w=4
+可写 : r=2 
+可执行 : x=1
+
+例如，我们想让test.txt这个文件的权限为： 
+        自己  同组用户   其他用户 
+可读     是     是         是 
+可写     是     是            
+可执行
+
+那么，我们先根据上表得到权限串为：rw-rw-r--，那么转换成二进制数就是110 110 100，
+再每三位转换成为一个十进制数，就得到664。
+因此我们执行命令：chmod 664 a.txt
+
+例如：
+-rw------- (600) -- 只有属主有读写权限
+-rw-r--r-- (644) -- 只有属主有读写权限；而属组用户和其他用户只有读权限
+-rwx------ (700) -- 只有属主有读、写、执行权限
+-rwxrwx--- (770) -- 只有属主和属组用户有读、写、执行权限
+-rwxrwxrwx (777) -- 所有用户都有读、写、执行权限
+
+# 给test.sh所有用户读、写、执行权限
+$ chmod 777 test.sh
+```
+
 ### 查看用户登录信息
 
 ```
@@ -973,3 +1039,4 @@ $ mysql -u root -p user < /home/ben/user20160101.sql
 - http://jingyan.baidu.com/article/d45ad148e801c769552b800c.html
 - http://www.php-note.com/article/detail/831
 - http://www.cnblogs.com/xiaouisme/archive/2012/11/09/2762543.html
+- http://blog.csdn.net/klyz1314/article/details/20250487

@@ -35,6 +35,9 @@ $ docker diff $CONTAINER_ID
 # 从一个容器中取日志
 $ docker logs $CONTAINER_ID 
 
+# 实时获取容器中取日志
+$ docker logs -f $CONTAINER_ID 
+
 # 从一个容器中取出最后的100条日志
 $ docker logs --tail=100 $CONTAINER_ID
 
@@ -89,7 +92,7 @@ $ docker build -t="birdben/ubuntu:v1" .
 $ docker run <相关参数> <镜像 ID> <初始命令>
 
 # 守护模式启动
-$ docker run -it ubuntu:14.04
+$ docker run -d ubuntu:14.04
 
 # 交互模式启动
 $ docker run -it ubuntu:14.04 /bin/bash
@@ -125,6 +128,64 @@ $ docker login
 
 # 发布上传image（push）
 $ docker push birdben/ubuntu:v1
+
+# 查看docker的所有网络
+$ docker network ls
+
+NETWORK ID          NAME                      DRIVER              SCOPE
+27822b9fb5c5        bridge                    bridge              local
+08b6d63e27d2        host                      host                local
+dd0874e0e097        none                      null                local
+bacc9a64bb83        test_default              bridge              local
+
+# 查看某个容器的网络信息
+$ docker network inspect $CONTAINER_ID
+
+[
+    {
+        "Name": "test_default",
+        "Id": "bacc9a64bb8323b2e53b1c85b4643061d38699227492f9174855202b6900252a",
+        "Created": "2017-04-21T10:29:37.26843596Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Containers": {},
+        "Options": {},
+        "Labels": {}
+    }
+]
+
+# 查看指定容器的9200端口映射情况
+$ docker port $CONTAINER_ID 9200
+0.0.0.0:9200
+
+# 查看指定容器的端口映射情况
+$ docker inspect --format '{{.NetworkSettings.Ports}}' $CONTAINER_ID
+
+# 查看指定镜像的环境变量
+$ docker run $IMAGE_ID env
+
+HOSTNAME=d2c948316235
+ES_VERSION=2.4.4
+ES_HOME=/usr/share/elasticsearch
+PATH=/usr/share/elasticsearch/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PWD=/
+JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/jre
+SHLVL=0
+HOME=/root
+GOSU_VERSION=1.7
 ```
 
 当利用 docker run 来创建容器时，Docker 在后台运行的标准操作包括：
