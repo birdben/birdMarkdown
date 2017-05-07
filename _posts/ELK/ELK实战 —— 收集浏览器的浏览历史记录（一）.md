@@ -1,4 +1,9 @@
-## ELK实战 —— 收集浏览器的浏览历史记录（一）
+---
+title: "ELK实战 —— 收集浏览器的浏览历史记录（一）"
+date: 2016-08-14 20:15:39
+tags: [ELK]
+categories: [Log]
+---
 
 ### 这里我们只收集Safari，Chrome，FireFox三个主流浏览器
 

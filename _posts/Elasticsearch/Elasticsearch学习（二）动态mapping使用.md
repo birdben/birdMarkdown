@@ -1,5 +1,5 @@
 ---
-title: "Elasticsearch学习（一）动态mapping使用"
+title: "Elasticsearch学习（二）动态mapping使用"
 date: 2017-02-12 17:42:02
 tags: [Elasticsearch]
 categories: [Search]
@@ -333,3 +333,12 @@ PUT my_index/my_type/1
 - https://www.elastic.co/guide/en/elasticsearch/reference/2.3/dynamic-templates.html
 - http://jiangpeng.info/blogs/2014/11/24/elasticsearch-mapping.html
 - https://my.oschina.net/u/204498/blog/529955
+- http://www.apache.wiki/pages/viewpage.action?pageId=9406922
+- http://ericyy.me/2016/11/17/elasticsearch-02-mapping.html
+- http://www.biglittleant.cn/2016/12/04/elastic-mapping/
+- https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/custom-dynamic-mapping.html
+- http://aoyouzi.iteye.com/blog/2116599
+- https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-nested-query.html
+- https://github.com/elastic/kibana/issues/1084
+- http://www.itkeyword.com/doc/7497179070907396685/nested-object-in-kibana-visualize
+- https://tech.homeaway.com/development/2016/07/05/improving-kibana-query-language-with-nested-support.html

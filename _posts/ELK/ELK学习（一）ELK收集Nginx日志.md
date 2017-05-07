@@ -487,7 +487,52 @@ upstream_response_time是"-"的情况比较好解决，只要稍微修改下Grok
 这里我们尽量把处理方式简化，在单一的服务器上安装好Nginx和ELK环境，对Nginx的access.log日志进行收集，解析，最终写入到ES中。
 
 ```
-input {    file {        path => ["/home/yunyu/Downloads/access.log"]        type => "nginx_access"        codec => "plain"        start_position => "beginning"        ignore_older => 0    }}filter {    if [type] == "nginx_access" {        grok {            match => {                "message" => "%{NGINX_ACCESS_LOGS}"            }        }        if "_grokparsefailure" in [tags] {            drop { }        }        date {            match => ["client_timestamp", "dd/MMM/yyyy:HH:mm:ss Z"]            target => "@timestamp"        }    }}output {    stdout {        codec => rubydebug    }    if [type] == "nginx_access" {        elasticsearch {            codec => "json"            hosts => ["hadoop1:9200", "hadoop2:9200", "hadoop3:9200"]            index => "nginx_access_logs_index_%{+YYYY.MM.dd}"            document_type => "%{type}"            template => "/usr/local/elasticsearch/template/nginx_access_logs_template.json"            template_name => "nginx_access_logs_template"            template_overwrite => true            workers => 1            flush_size => 20000            idle_flush_time => 10        }    }}
+input {
+    file {
+        path => ["/home/yunyu/Downloads/access.log"]
+        type => "nginx_access"
+        codec => "plain"
+        start_position => "beginning"
+        ignore_older => 0
+    }
+}
+
+filter {
+    if [type] == "nginx_access" {
+        grok {
+            match => {
+                "message" => "%{NGINX_ACCESS_LOGS}"
+            }
+        }
+        if "_grokparsefailure" in [tags] {
+            drop { }
+        }
+        date {
+            match => ["client_timestamp", "dd/MMM/yyyy:HH:mm:ss Z"]
+            target => "@timestamp"
+        }
+    }
+}
+
+output {
+    stdout {
+        codec => rubydebug
+    }
+    if [type] == "nginx_access" {
+        elasticsearch {
+            codec => "json"
+            hosts => ["hadoop1:9200", "hadoop2:9200", "hadoop3:9200"]
+            index => "nginx_access_logs_index_%{+YYYY.MM.dd}"
+            document_type => "%{type}"
+            template => "/usr/local/elasticsearch/template/nginx_access_logs_template.json"
+            template_name => "nginx_access_logs_template"
+            template_overwrite => true
+            workers => 1
+            flush_size => 20000
+            idle_flush_time => 10
+        }
+    }
+}
 ```
 
 ### ES的索引Template模板

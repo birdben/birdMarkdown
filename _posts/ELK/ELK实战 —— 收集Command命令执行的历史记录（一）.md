@@ -1,4 +1,9 @@
-## ELK实战 —— 收集Command命令执行的历史记录（一）
+---
+title: "ELK实战 —— 收集Command命令执行的历史记录（一）"
+date: 2016-08-14 14:36:01
+tags: [ELK]
+categories: [Log]
+---
 
 先说明一下我的安装环境，我用的是MacBook所以环境可能和Linux系统稍有不同，这里使用ELK来收集Command命令的执行历史记录，在架构上做了简化直接使用Logstash收集log文件，然后output输出到ES，所以Logstash没有区分Shipper和Indexer，也没有使用Redis做缓冲处理，后续会再细化补充。
 

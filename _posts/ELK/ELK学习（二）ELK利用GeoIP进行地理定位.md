@@ -1,5 +1,5 @@
 ---
-title: "ELK学习（一）ELK利用GeoIP进行地理定位"
+title: "ELK学习（二）ELK利用GeoIP进行地理定位"
 date: 2017-01-23 20:15:20
 tags: [ELK]
 categories: [Log]

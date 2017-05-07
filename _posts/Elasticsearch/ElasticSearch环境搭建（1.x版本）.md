@@ -1,4 +1,9 @@
-## ElasticSearch环境搭建（1.x版本）
+---
+title: "ElasticSearch环境搭建（1.x版本）"
+date: 2016-08-11 21:49:20
+tags: [Elasticsearch]
+categories: [Search]
+---
 
 基本步骤如下（ES版本是1.7.x）
 
