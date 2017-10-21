@@ -541,6 +541,45 @@ A : 将Shipper端换成Logstash，保证Shipper和Indexer用同样的序列化�
 Q : 最近部署了线上的logstash，发现一个问题ES的host字段为0.0.0.0，这个host是Logstash Shipper端自动添加的Header字段。
 A : 后来发现是因为/etc/hosts的IP、主机名和hostname不一致导致的, 只要设置成一致就可以解决这个问题了。
 
+### 后续补充
+
+##### Kafka与Logstash版本问题
+
+不同的Kafka版本对应不同的Logstash版本和插件版本，后来我们在升级ES和Logtash到5.x版本时遇到了Kafka版本与升级后的Logstash版本不匹配问题，最后只能继续使用Logstash 2.4版本。下面是Kafka和Logstash以及Logstash插件的版本对应关系：
+
+Kafka Client Version|Logstash Version|PluginVersion|Why?
+---|---|---|---
+0.8|2.0.0 - 2.x.x|<3.0.0|Legacy, 0.8 is still popular
+0.9|2.0.0 - 2.3.x|3.x.x|Works with the old Ruby Event API (event['product']['price'] = 10)
+0.9|2.4.x - 5.x.x|4.x.x|Works with the new getter/setter APIs (event.set('[product][price]', 10))
+0.10.0.x|2.4.x - 5.x.x|5.x.x|Not compatible with the ⇐ 0.9 broker
+
+Logstash 5.x版本的Kafka插件配置上也略有不同，这里简单介绍几个，更多具体的配置细节需要参考Elastic官网。
+
+- Kafka Input
+
+ * codec : 2.x版本默认值为json，5.x版本默认值为plain
+ * auto_offset_reset : 2.x版本可选值为["largest", "smallest"]，5.x版本可选值为["earliest", "latest", "none", "anything else"]。这个是根据Kafka的版本对应的。
+ * zk_connect变成bootstrap_servers
+ * topic_id变成topics
+
+- Kafka Output
+
+ * codec : 2.x版本默认值为json，5.x版本默认值为plain
+ * workers : 2.x版本类型为number，5.x版本类型为string
+
+##### Logstash升级到5.x版本解析日志遇到_timestampparsefailure
+
+前端同学用了一个记录日志的工具，自动将日志格式记录成json格式，而且包含@timestamp字段。所以怀疑是该字段引起的，后来查了一下官网Logstash的json插件，有下面的一段描述，才发现问题是日志中的@timestamp格式不正确导致的。
+
+```
+If the parsed data contains a @timestamp field, we will try to use it for the event’s @timestamp, if the parsing fails, the field will be renamed to _@timestamp and the event will be tagged with a _timestampparsefailure.
+
+如果解析的数据包含@timestamp字段，我们将尝试将其用于事件的@timestamp，如果解析失败，则该字段将重命名为_@timestamp，并且事件将被标记为_timestampparsefailure。
+```
+
+@符号是Logstash中的保留字符，所以日志字段中的尽量避免使用该符号开头。
+
 参考文章：
 
 - https://www.elastic.co/guide/en/logstash/2.3/plugins-inputs-kafka.html

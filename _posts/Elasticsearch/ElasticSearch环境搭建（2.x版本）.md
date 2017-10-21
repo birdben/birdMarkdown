@@ -1,5 +1,5 @@
 ---
-title: "ElasticSearch环境搭建（2.x版本）"
+title: "Elasticsearch环境搭建（2.x版本）"
 date: 2016-08-12 23:15:51
 tags: [Elasticsearch]
 categories: [Search]

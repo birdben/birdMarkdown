@@ -449,17 +449,18 @@ $ sort file.txt | uniq -d
 $ grep -r "127.0.0.1:2181" . --exclude-dir="./yunyu-stt"
 
 
-# 或操作
+# 或操作（|必须使用\转义）
 # 找出文件（filename）中包含123或者包含abc的行
-$ grep -E '123|abc' filename
+$ grep -E '123\|abc' filename
+$ grep -E '123' -E 'abc' filename
 
 # 用egrep同样可以实现
-$ egrep '123|abc' filename
+$ egrep '123\|abc' filename
 
 # awk 的实现方式
 $ awk '/123|abc/' filename
 
-# 与操作
+# 与操作（在第一个grep查询之后接第二个grep查询）
 # 显示既匹配 pattern1 又匹配 pattern2 的行
 $ grep pattern1 files | grep pattern2
 
@@ -1040,3 +1041,5 @@ $ mysql -u root -p user < /home/ben/user20160101.sql
 - http://www.php-note.com/article/detail/831
 - http://www.cnblogs.com/xiaouisme/archive/2012/11/09/2762543.html
 - http://blog.csdn.net/klyz1314/article/details/20250487
+- http://blog.csdn.net/hellochenlian/article/details/34088179
+- http://man.linuxde.net/netstat

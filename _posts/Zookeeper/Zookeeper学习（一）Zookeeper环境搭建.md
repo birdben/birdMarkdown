@@ -123,8 +123,23 @@ yunyu@ubuntu:/software/zookeeper-3.4.8/bin$ ps -ef | grep zookeeperyunyu    168
 yunyu@ubuntu:/software/zookeeper-3.4.8/bin$ lsof -i:2181COMMAND   PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAMEjava    16845 yunyu   19u  IPv6  50306      0t0  TCP *:2181 (LISTEN)java    16845 yunyu   20u  IPv6  51041      0t0  TCP localhost:2181->localhost:40895 (ESTABLISHED)java    17569 yunyu   13u  IPv6  51020      0t0  TCP localhost:40895->localhost:2181 (ESTABLISHED)
 ```
 
+#### 查看zookeeper日志
+
+zookeeper的事务日志通过zoo.cfg文件中的dataLogDir配置项配置，直接查看日志会显示为乱码，需要使用zookeeper的LogFormatter格式化之后再输出到终端显示，需要使用classpath参数指定slf4j和zookeeper对应的jar包位置。
+
+```
+$ java -classpath .:/usr/local/zookeeper/lib/slf4j-api-1.6.1.jar:/usr/local/zookeeper/zookeeper-3.4.8.jar org.apache.zookeeper.server.LogFormatter /var/log/zookeeper/version-2/log.1
+...
+7/4/17 6:22:17 PM CST session 0x15ae39aed20004c cxid 0x13b18e0 zxid 0x1109186e46 setData '/consumers/logstash_node/offsets/log_node/4,#313238323037383034,13024732
+
+7/4/17 6:22:17 PM CST session 0x15ae39aed20004c cxid 0x13b18e1 zxid 0x1109186e47 setData '/consumers/logstash_node/offsets/log_node/3,#313238323133373033,13059115
+
+7/4/17 6:22:17 PM CST session 0x15ae39aed20004c cxid 0x13b18e2 zxid 0x1109186e48 setData '/consumers/logstash_node/offsets/log_node/5,#313238323133363635,13079976
+```
+
 OK，Zookeeper的standalone模式的配置就大功告成了 ^_^
 
 参考文章：
 
 - http://zookeeper.apache.org/doc/trunk/zookeeperStarted.html
+- http://blog.csdn.net/qq_16365849/article/details/45041293

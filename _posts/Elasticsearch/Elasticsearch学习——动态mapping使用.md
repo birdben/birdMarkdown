@@ -1,5 +1,5 @@
 ---
-title: "Elasticsearch学习（二）动态mapping使用"
+title: "Elasticsearch学习——动态mapping使用"
 date: 2017-02-12 17:42:02
 tags: [Elasticsearch]
 categories: [Search]

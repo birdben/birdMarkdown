@@ -106,7 +106,7 @@ add_replication.json
 
 ```
 {
-    "version":1
+    "version":1,
     "partitions":[
         {
             "topic":"node_log",
