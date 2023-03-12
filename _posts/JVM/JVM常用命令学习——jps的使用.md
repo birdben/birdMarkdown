@@ -12,16 +12,23 @@ jps(Java Virtual Machine Process Status Tool)。jps只是用来显示Java进程�
 如果使用jps查看远程服务器的Java进程信息，需要在远程服务器上开启jstatd服务。
 
 ```
-$ jps -helpusage: jps [-help]       jps [-q] [-mlvV] [<hostid>]Definitions:    <hostid>:      <hostname>[:<port>]
+$ jps -help
+usage: jps [-help]
+       jps [-q] [-mlvV] [<hostid>]
+
+Definitions:
+    <hostid>:      <hostname>[:<port>]
 ```
 
 通过help提示可以看出基本的命令输入格式为：
 
 ```
-jps [option] : 查看Java进程信息jps [option] <hostname>[:<port>] : 查看一个远程server的Java进程信息，port是远程rmi的端口，如果没有指定则默认为1099。
+jps [option] : 查看Java进程信息
+jps [option] <hostname>[:<port>] : 查看一个远程server的Java进程信息，port是远程rmi的端口，如果没有指定则默认为1099。
 
 参数：
-<hostname> : 远程debug服务的主机名或ip<port> : 远程debug服务的端口号
+<hostname> : 远程debug服务的主机名或ip
+<port> : 远程debug服务的端口号
 
 [option]参数：
 
@@ -47,19 +54,34 @@ lvmid : 进程的pid
 ### 实例
 
 ```
-$ jps22549 QuorumPeerMain18187 Jps14983 Jstatd
+$ jps
+22549 QuorumPeerMain
+18187 Jps
+14983 Jstatd
 
 # 只输出进程的pid
-$ jps -q225491498318259
+$ jps -q
+22549
+14983
+18259
 
 # 输出应用程序主类的完整包名，或者是应用程序JAR文件的完整路径。
-$ jps -l22549 org.apache.zookeeper.server.quorum.QuorumPeerMain18113 sun.tools.jps.Jps14983 sun.tools.jstatd.Jstatd
+$ jps -l
+22549 org.apache.zookeeper.server.quorum.QuorumPeerMain
+18113 sun.tools.jps.Jps
+14983 sun.tools.jstatd.Jstatd
 
 # 输出传递给main方法的参数，如果是内嵌的JVM则输出为null。
-$ jps -m22549 QuorumPeerMain /usr/local/zookeeper/bin/../conf/zoo.cfg18344 Jps -m14983 Jstatd
+$ jps -m
+22549 QuorumPeerMain /usr/local/zookeeper/bin/../conf/zoo.cfg
+18344 Jps -m
+14983 Jstatd
 
 # 输出传给JVM的参数
-$ jps -v22549 QuorumPeerMain -Dzookeeper.log.dir=. -Dzookeeper.root.logger=INFO,CONSOLE -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false17992 Jps -Dapplication.home=/data/jdk1.7.0_79 -Xms8m14983 Jstatd -Dapplication.home=/data/jdk1.7.0_79 -Xms8m -Djava.security.policy=jstatd.all.policy
+$ jps -v
+22549 QuorumPeerMain -Dzookeeper.log.dir=. -Dzookeeper.root.logger=INFO,CONSOLE -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false
+17992 Jps -Dapplication.home=/data/jdk1.7.0_79 -Xms8m
+14983 Jstatd -Dapplication.home=/data/jdk1.7.0_79 -Xms8m -Djava.security.policy=jstatd.all.policy
 
 # 在hadoop1的机器的${JAVA_HOME}/bin目录下创建jstatd.all.policy安全策略文件
 grant codebase "file:${java.home}/../lib/tools.jar" {
@@ -79,3 +101,4 @@ $ jps -l hadoop1:1099
 参考文章：
 
 - http://www.softown.cn/post/184.html
+- http://blog.csdn.net/fenglibing/article/details/6411932

@@ -31,6 +31,9 @@ categories: [Maven]
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.13</version>
+      <scope>system</scope>
+      <!-- ${basedir} 项目根目录 -->
+      <systemPath>${basedir}/lib/slf4j-api-1.7.13.jar</systemPath>
     </dependency>
 
     <!-- 其他jar包引用开始 -->
