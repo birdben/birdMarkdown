@@ -933,6 +933,11 @@ $ hostname oratest
 参数-f是必须的
 -f: 使用档案名字，切记，这个参数是最后一个参数，后面只能接档案名。
 
+# 加密压缩
+$ tar -czvf - file | openssl des3 -salt -k password -out /path/to/file.tar.gz
+# 解密解压
+$ openssl des3 -d -k password -salt -in /path/to/file.tar.gz | tar xzf -
+
 # 压缩
 # 这条命令是将所有.jpg的文件打成一个名为all.tar的包。-c是表示产生新的包，-f指定包的文件名。
 $ tar -cf all.tar *.jpg
