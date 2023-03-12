@@ -106,7 +106,7 @@ add_replication.json
 
 ```
 {
-    "version":1
+    "version":1,
     "partitions":[
         {
             "topic":"node_log",
@@ -426,10 +426,15 @@ Topic:node_log	PartitionCount:6	ReplicationFactor:2	Configs:
 参考文章：
 
 - http://blog.csdn.net/lsshlsw/article/details/47615747
-- https://www.iteblog.com/archives/1611
-- https://www.iteblog.com/archives/1613
-- https://www.iteblog.com/archives/1614
-- http://wzktravel.github.io/2015/12/31/kafka-reassign/
+- http://blog.csdn.net/damacheng/article/details/42393865
+- http://blog.csdn.net/damacheng/article/details/42393877
+- http://blog.csdn.net/damacheng/article/details/42393883
 - http://blog.csdn.net/lizhitao/article/details/41441513
-- https://cwiki.apache.org/confluence/display/KAFKA/Replication+tools#Replicationtools-2.PreferredReplicaLeaderElectionTool
+- http://blog.csdn.net/lizhitao/article/details/45894109
+- https://www.iteblog.com/archives/1611.html
+- https://www.iteblog.com/archives/1613.html
+- https://www.iteblog.com/archives/1614.html
+- https://www.iteblog.com/archives/1384.html
+- https://cwiki.apache.org/confluence/display/KAFKA/Replication+tools
 - https://cwiki.apache.org/confluence/pages/diffpages.action?pageId=31819985&originalId=34022604
+- http://wzktravel.github.io/2015/12/31/kafka-reassign/

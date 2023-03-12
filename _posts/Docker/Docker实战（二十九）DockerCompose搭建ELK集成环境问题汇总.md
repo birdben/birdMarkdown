@@ -7,6 +7,29 @@ categories: [Docker]
 
 今天记录一下在使用docker-compose构建ELK集成环境时遇到的坑，废话不多说了直接来踩坑。
 
+### docker容器时区不正确，导致logstash转换@timestamp时间不正确
+
+在宿主机直接运行Logstash生成索引的@timestamp时间戳和换成Logstash的Docker容器之后生成索引的@timestamp时间戳不一致。这个问题是因为宿主机的时区使用的北京时区，而Docker容器默认使用的是标准的UTC时区。可以使用date -R查看对应的时间和时区信息。
+
+```
+# 宿主机时间和时区
+$ date -R
+Thu, 06 Jul 2017 18:00:03 +0800
+```
+
+```
+# docker容器时间和时区
+$ date -R
+Thu, 06 Jul 2017 10:00:44 +0000
+```
+
+需要在Logstash的Dockerfile中添加如下的配置来修改时区，和宿主机时区保持一致。
+
+```
+RUN echo "Asia/Shanghai" > /etc/timezone
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
+```
+
 ### docker网络冲突
 
 在修改好ELK的docker-compose.yml配置文件后，尝试启动遇到网络冲突的问题，错误提示说"172.18.0.1"这个网络已经存在。
@@ -210,7 +233,146 @@ Logstash的jvm.options
 -Xmx256m
 ```
 
+### 宿主机磁盘使用率超过90%无法创建索引（注意：ES集群环境）
+
+当尝试在DockerCompose的ES集群环境下创建user索引时，ES响应会等待很长时间，然后会返回如下的错误信息。
+
+```
+$ curl -XPOST 'http://localhost:9200/user/test_type/123?pretty' -d '{
+  "name": "birdben"
+}'
+{
+  "error" : {
+    "root_cause" : [
+      {
+        "type" : "unavailable_shards_exception",
+        "reason" : "[user][0] primary shard is not active Timeout: [1m], request: [BulkShardRequest [[user][0]] containing [index {[user][test_type][123], source[{\n  \"name\": \"birdben\"\n}]}]]"
+      }
+    ],
+    "type" : "unavailable_shards_exception",
+    "reason" : "[user][0] primary shard is not active Timeout: [1m], request: [BulkShardRequest [[user][0]] containing [index {[user][test_type][123], source[{\n  \"name\": \"birdben\"\n}]}]]"
+  },
+  "status" : 503
+}
+```
+
+查看ES的日志文件发现会有类似如下的日志内容
+
+
+node-2主节点日志内容：
+
+```
+[2017-07-03T06:48:58,959][INFO ][o.e.c.m.MetaDataCreateIndexService] [node-2] [user] creating index, cause [auto(bulk api)], templates [], shards [5]/[1], mappings []
+[2017-07-03T06:48:58,962][INFO ][o.e.c.r.a.AllocationService] [node-2] Cluster health status changed from [YELLOW] to [RED] (reason: [index [user] created]).
+[2017-07-03T06:49:05,226][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [NtGKJqk2QKqok-rwGpqucw][node-1][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:49:05,227][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [XPdWevLdQGmarhU5K81SCA][node-3][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:49:05,228][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [KuvXDGWETneC8zayqd9hbA][node-2][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:49:05,229][INFO ][o.e.c.r.a.DiskThresholdMonitor] [node-2] rerouting shards: [high disk watermark exceeded on one or more nodes]
+[2017-07-03T06:49:35,244][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [NtGKJqk2QKqok-rwGpqucw][node-1][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:49:35,245][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [KuvXDGWETneC8zayqd9hbA][node-2][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:49:35,249][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [XPdWevLdQGmarhU5K81SCA][node-3][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:50:05,269][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [NtGKJqk2QKqok-rwGpqucw][node-1][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:50:05,269][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [XPdWevLdQGmarhU5K81SCA][node-3][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:50:05,270][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [KuvXDGWETneC8zayqd9hbA][node-2][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:50:05,270][INFO ][o.e.c.r.a.DiskThresholdMonitor] [node-2] rerouting shards: [high disk watermark exceeded on one or more nodes]
+[2017-07-03T06:50:35,288][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [NtGKJqk2QKqok-rwGpqucw][node-1][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:50:35,289][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [XPdWevLdQGmarhU5K81SCA][node-3][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:50:35,290][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [KuvXDGWETneC8zayqd9hbA][node-2][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:51:05,307][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [NtGKJqk2QKqok-rwGpqucw][node-1][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:51:05,309][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [XPdWevLdQGmarhU5K81SCA][node-3][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:51:05,309][WARN ][o.e.c.r.a.DiskThresholdMonitor] [node-2] high disk watermark [90%] exceeded on [KuvXDGWETneC8zayqd9hbA][node-2][/usr/share/elasticsearch/data/nodes/0] free: 19.3gb[8.3%], shards will be relocated away from this node
+[2017-07-03T06:51:05,310][INFO ][o.e.c.r.a.DiskThresholdMonitor] [node-2] rerouting shards: [high disk watermark exceeded on one or more nodes]
+```
+
+node-1节点日志内容：
+
+```
+[2017-07-03T06:50:29,048][WARN ][r.suppressed             ] path: /user/test_type/123, params: {pretty=, index=user, id=123, type=test_type}
+org.elasticsearch.action.UnavailableShardsException: [user][0] primary shard is not active Timeout: [1m], request: [BulkShardRequest [[user][0]] containing [index {[user][test_type][123], source[{
+  "name": "birdben"
+}]}]]
+	at org.elasticsearch.action.support.replication.TransportReplicationAction$ReroutePhase.retryBecauseUnavailable(TransportReplicationAction.java:862) [elasticsearch-5.3.1.jar:5.3.1]
+	at org.elasticsearch.action.support.replication.TransportReplicationAction$ReroutePhase.retryIfUnavailable(TransportReplicationAction.java:699) [elasticsearch-5.3.1.jar:5.3.1]
+	at org.elasticsearch.action.support.replication.TransportReplicationAction$ReroutePhase.doRun(TransportReplicationAction.java:653) [elasticsearch-5.3.1.jar:5.3.1]
+	at org.elasticsearch.common.util.concurrent.AbstractRunnable.run(AbstractRunnable.java:37) [elasticsearch-5.3.1.jar:5.3.1]
+	at org.elasticsearch.action.support.replication.TransportReplicationAction$ReroutePhase$2.onTimeout(TransportReplicationAction.java:816) [elasticsearch-5.3.1.jar:5.3.1]
+	at org.elasticsearch.cluster.ClusterStateObserver$ContextPreservingListener.onTimeout(ClusterStateObserver.java:311) [elasticsearch-5.3.1.jar:5.3.1]
+	at org.elasticsearch.cluster.ClusterStateObserver$ObserverClusterStateListener.onTimeout(ClusterStateObserver.java:238) [elasticsearch-5.3.1.jar:5.3.1]
+	at org.elasticsearch.cluster.service.ClusterService$NotifyTimeout.run(ClusterService.java:1162) [elasticsearch-5.3.1.jar:5.3.1]
+	at org.elasticsearch.common.util.concurrent.ThreadContext$ContextPreservingRunnable.run(ThreadContext.java:569) [elasticsearch-5.3.1.jar:5.3.1]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) [?:1.8.0_121]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617) [?:1.8.0_121]
+	at java.lang.Thread.run(Thread.java:745) [?:1.8.0_121]
+```
+
+日志内容提示有因为磁盘使用率处在一个high watermark，所以索引分片不能分配到该节点（node-2）。
+然后集群节点索引分片开始重新路由分配，因为我的ES集群是使用DockerCompose在我笔记本运行的，我将ES每个节点的data目录都挂载到宿主机磁盘（我笔记本的磁盘），所以ES集群的三个节点的磁盘实际上都是我笔记本的磁盘，所以当我笔记本的磁盘使用率超过了90%（默认配置），所以通过看到node-2节点的日志可以看到ES集群一直在尝试重新路由分配分片到其他节点上，最后看到node-1节点出现了创建user索引超时的错误信息，原因就是user索引的主分片不可用，因为ES集群中的所有节点的磁盘使用率都已经超过了90%，无法再在ES集群中的三个节点创建分片。（单个节点不会出现这个问题，因为没有其他节点可以尝试重新分配创建分片）
+
+查看此时user索引的分片状态如下：
+
+```
+$ curl -XGET 'http://localhost:9200/_cat/indices'
+red open user BxPHUWS_QzqNTw0EHWnDag 5 1
+
+$ curl -XGET 'http://localhost:9200/_cat/shards?pretty'
+user 2 p UNASSIGNED
+user 2 r UNASSIGNED
+user 1 p UNASSIGNED
+user 1 r UNASSIGNED
+user 4 p UNASSIGNED
+user 4 r UNASSIGNED
+user 3 p UNASSIGNED
+user 3 r UNASSIGNED
+user 0 p UNASSIGNED
+user 0 r UNASSIGNED
+```
+
+这里我们清理一下磁盘空间后，将磁盘使用率控制在90%以下，然后重新创建user索引。此时user索引创建成功，而且分片状态也都正常了。
+
+```
+$ curl -XPOST 'http://localhost:9200/user/test_type/123?pretty' -d '{
+  "name": "birdben"
+}'
+{
+  "_index" : "user",
+  "_type" : "test_type",
+  "_id" : "123",
+  "_version" : 1,
+  "result" : "created",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "created" : true
+}
+
+$ curl -XGET 'http://localhost:9200/_cat/indices'
+yellow open user nYJTLo3HQyS40yYTLq9L-g 5 1 1 0 3.8kb 3.8kb
+
+$ curl -XGET 'http://localhost:9200/_cat/shards?pretty'
+user 2 p STARTED    0  130b 172.20.0.2 node-1
+user 2 r UNASSIGNED
+user 1 p STARTED    0  130b 172.20.0.4 node-3
+user 1 r UNASSIGNED
+user 4 p STARTED    0  130b 172.20.0.4 node-3
+user 4 r UNASSIGNED
+user 3 p STARTED    0  130b 172.20.0.3 node-2
+user 3 r UNASSIGNED
+user 0 p STARTED    1 3.3kb 172.20.0.3 node-2
+user 0 r UNASSIGNED
+```
+
+还可以通过ES的API修改集群的告警的低水位和高水位设置
+
+```
+$ curl -XPUT 'localhost:9200/_cluster/settings' -d '{"transient":{"cluster.routing.allocation.disk.watermark.low":"90%"}}' 
+```
+
 参考文章：
 
 - http://www.open-open.com/lib/view/open1451606865542.html
 - https://github.com/logstash-plugins/logstash-output-elasticsearch/issues/400
+- https://www.elastic.co/guide/en/elasticsearch/reference/current/disk-allocator.html
+- http://miaocbin.blog.51cto.com/689091/1860921
+- http://dockone.io/question/362
