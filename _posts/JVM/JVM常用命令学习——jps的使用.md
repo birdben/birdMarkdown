@@ -1,17 +1,9 @@
 ---
-title: "JVM常用命令学习（一）jps的使用"
+title: "JVM常用命令学习——jps的使用"
 date: 2017-02-09 18:23:28
 tags: [JVM]
 categories: [Java]
 ---
-
-### Java环境说明
-
-注意：不同版本的JDK可能略有差异
-
-```
-$ java -versionjava version "1.7.0_79"Java(TM) SE Runtime Environment (build 1.7.0_79-b15)Java HotSpot(TM) 64-Bit Server VM (build 24.79-b02, mixed mode)
-```
 
 ### jps命令
 
@@ -23,18 +15,33 @@ jps(Java Virtual Machine Process Status Tool)。jps只是用来显示Java进程�
 $ jps -helpusage: jps [-help]       jps [-q] [-mlvV] [<hostid>]Definitions:    <hostid>:      <hostname>[:<port>]
 ```
 
-通过help提示可以看出基本的命令格式
-
-- jps [option] : 查看Java进程信息- jps [option] <hostname>[:<port>] : 查看一个远程server的Java进程信息，port是远程rmi的端口，如果没有指定则默认为1099。
+通过help提示可以看出基本的命令输入格式为：
 
 ```
+jps [option] : 查看Java进程信息jps [option] <hostname>[:<port>] : 查看一个远程server的Java进程信息，port是远程rmi的端口，如果没有指定则默认为1099。
+
+参数：
+<hostname> : 远程debug服务的主机名或ip<port> : 远程debug服务的端口号
+
 [option]参数：
 
-- q : 只输出进程的pid
-- m : 输出传递给main方法的参数，如果是内嵌的JVM则输出为null。
-- l : 输出应用程序主类的完整包名，或者是应用程序JAR文件的完整路径。
-- v : 输出传给JVM的参数
-- V : 输出通过标记的文件传递给JVM的参数（.hotspotrc文件，或者是通过参数-XX:Flags=<filename>指定的文件）。
+<no option> : 输出进程的pid和应用程序主类的名称（不是完整包名）。
+-q : 只输出进程的pid
+-m : 输出传递给main方法的参数，如果是内嵌的JVM则输出为null。
+-l : 输出应用程序主类的完整包名，或者是应用程序JAR文件的完整路径。
+-v : 输出传给JVM的参数
+-V : 输出通过标记的文件传递给JVM的参数（.hotspotrc文件，或者是通过参数-XX:Flags=<filename>指定的文件）。
+```
+
+输出格式为：
+
+```
+lvmid[ [classname|JARfilename|"Unknown"] [arg* ] [jvmarg* ] ]
+
+lvmid : 进程的pid
+[classname|JARfilename|"Unknown"] : 应用程序主类的完整包名，或者是应用程序JAR文件的完整路径。
+[arg* ] : 传递给main方法的参数
+[jvmarg* ] : 传给JVM的参数
 ```
 
 ### 实例
@@ -71,4 +78,4 @@ $ jps -l hadoop1:1099
 
 参考文章：
 
-- http://blog.csdn.net/fenglibing/article/details/6411932
+- http://www.softown.cn/post/184.html

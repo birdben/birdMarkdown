@@ -31,9 +31,6 @@ categories: [Maven]
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.13</version>
-      <scope>system</scope>
-      <!-- ${basedir} 项目根目录 -->
-      <systemPath>${basedir}/lib/slf4j-api-1.7.13.jar</systemPath>
     </dependency>
 
     <!-- 其他jar包引用开始 -->
@@ -77,6 +74,14 @@ categories: [Maven]
 </project>
 ```
 
+##### 构建之前对应目录结构
+
+![构建之前对应目录结构](http://img.blog.csdn.net/20170701173706129?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYmlyZGJlbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+##### 构建之后对应目录结构
+
+![构建之后对应目录结构](http://img.blog.csdn.net/20170701173744125?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYmlyZGJlbg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
 ##### App.java
 ```
 package com.birdben;
@@ -103,8 +108,18 @@ public class App {
 
 ##### 终端
 ```
+# 构建jar包
+$ mvn clean compile package
+
+# 进入target目录
+$ cd target
+
 # 运行jar
 $ java -jar App.jar
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+Hello World!
 ```
 
 参考文章：

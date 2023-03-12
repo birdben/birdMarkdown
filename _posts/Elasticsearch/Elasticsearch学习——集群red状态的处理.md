@@ -1,5 +1,5 @@
 ---
-title: "Elasticsearch学习（一）集群red状态的处理"
+title: "Elasticsearch学习——集群red状态的处理"
 date: 2016-12-22 21:25:14
 tags: [Elasticsearch]
 categories: [Search]

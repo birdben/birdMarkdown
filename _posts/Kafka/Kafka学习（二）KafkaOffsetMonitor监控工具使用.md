@@ -51,3 +51,7 @@ java -cp KafkaOffsetMonitor-assembly-0.2.1.jar \
 
 - https://github.com/quantifind/KafkaOffsetMonitor
 - https://github.com/quantifind/KafkaOffsetMonitor/issues/86
+- https://github.com/Morningstar/kafka-offset-monitor
+- https://github.com/chadlwm/ShareFiles/tree/master/KafkaOffsetMonitor
+- https://github.com/quantifind/KafkaOffsetMonitor/issues/79
+- https://github.com/quantifind/KafkaOffsetMonitor/issues/111
